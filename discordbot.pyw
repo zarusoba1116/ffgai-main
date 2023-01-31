@@ -68,11 +68,6 @@ async def ping(ctx):
     await ctx.send(embed=embed_ping)
 
 @bot.command()
-async def tr(ctx):
-    result = Translator.translate("hello", src="en", dest="ja").text
-    await ctx.send(result)
-
-@bot.command()
 async def syamu(ctx):
     guild = bot.get_guild(852145141909159947)
     channel = guild.get_channel(852145141909159950)
