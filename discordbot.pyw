@@ -5,8 +5,6 @@ from discord.ext import commands
 import asyncio
 import Word_list
 from win11toast import toast_async
-import requests
-from PIL import Image
 import time
 import json
 

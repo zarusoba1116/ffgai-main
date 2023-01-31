@@ -1,10 +1,7 @@
+re
+random
 discord
-requests
-dispander
-purge
-ffmpeg
-regex
+discord.ext
 asyncio
-datetime
-humanfriendly
-schedule
+time
+json

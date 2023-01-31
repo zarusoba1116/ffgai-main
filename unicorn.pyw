@@ -2,7 +2,6 @@ import discord
 import asyncio
 from discord.ext import commands
 from datetime import datetime
-import time
 
 intents = discord.Intents.all()
 intents.typing = False
