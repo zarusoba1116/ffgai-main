@@ -1,0 +1,10 @@
+discord
+requests
+dispander
+purge
+ffmpeg
+regex
+asyncio
+datetime
+humanfriendly
+schedule
