@@ -166,7 +166,7 @@ async def on_message(message):
                     if attachment.url.endswith(("png", "jpg", "jpeg")):
                         for reaction in reactions:
                             await message.add_reaction(reaction)
-                        if random.randint(1,100) < 10:
+                        if random.randint(1,100) < 5:
                             async with message.channel.typing():
                                 await asyncio.sleep(0.5)
                                 await message.channel.send(text_1)
