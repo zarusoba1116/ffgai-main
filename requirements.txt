@@ -1,7 +1,0 @@
-re
-random
-discord
-discord.ext
-asyncio
-time
-json
