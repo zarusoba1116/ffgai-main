@@ -7,6 +7,7 @@ import time
 import json
 from Word_list import words
 import os
+from keep_alive import keep_alive
 
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
 json_open = open('data.json', 'r')
