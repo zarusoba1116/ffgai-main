@@ -13,12 +13,11 @@ from Word_list import words
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
 json_open = open('data.json', 'r')
 json_data = json.load(json_open)
-
+TOKEN = os.getenv("DISCORD_TOKEN")
 intents = discord.Intents.all()
 intents.typing = False
 guild = 852145141909159947
 
-TOKEN = 'ODk5OTUyMTEyNjM1NjQxODU2.Gr8esq.MGNXLqfIlAEs6neHN1i-bvISjpUHZme1sMaS5k'
 bot = commands.Bot(command_prefix='$',help_command=None,case_insensitive=True,intents=intents)
 
 previous_output = None
@@ -150,5 +149,5 @@ async def on_message(message):
                 await message.reply(random_word, mention_author=False)
                 previous_output = random_word
 
-
+keep_alive()
 bot.run(TOKEN)
