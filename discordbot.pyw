@@ -9,7 +9,6 @@ import json
 import requests
 from PIL import Image
 from Word_list import words
-import datetime
 
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
 json_open = open('data.json', 'r')
@@ -19,94 +18,8 @@ intents = discord.Intents.all()
 intents.typing = False
 guild = 852145141909159947
 
-TOKEN = 'ODk5OTUyMTEyNjM1NjQxODU2.GR5_br.wTu3999-rYY4MUTxycKea83YUyJ_1ISw5I_DQ4'
+TOKEN = 'ODk5OTUyMTEyNjM1NjQxODU2.Gr8esq.MGNXLqfIlAEs6neHN1i-bvISjpUHZme1sMaS5k'
 bot = commands.Bot(command_prefix='$',help_command=None,case_insensitive=True,intents=intents)
-
-@bot.event
-async def on_member_join(member):
-    guild = bot.get_guild(852145141909159947)
-    channel = guild.get_channel(852145141909159950)
-    await channel.send(f"{member.mention}がサーバーに参加したゾ～\nハイ、ヨロシクゥ！")
-
-snipe_message_author = {}
-snipe_message_content = {}
-
-@bot.event
-async def on_voice_state_update(member, before, after): 
-    guild = bot.get_guild(852145141909159947)
-    me = guild.get_member(733646900481490976)
-    if me != member:
-        if before.channel is None:
-            buttons = [{'activationType': 'protocol', 'arguments': r'D:\Other\ffgai-main\ffgai-main\open.pyw', 'content': 'Discordを開く'},
-                {'activationType': 'protocol', 'arguments': '', 'content': '閉じる'}]
-            await toast_async(f"{member.display_name} (#{after.channel.name})", f"📞 通話に接続しました", icon=member.avatar.url, duration='short', audio={'silent': 'true'}, buttons=buttons)
-
-        elif after.channel is None:
-            if me.voice:
-                await toast_async(f"{member.display_name} (#{before.channel.name})", f"📞 通話を切断しました", icon=member.avatar.url, duration='short', audio={'silent': 'true'}, button='閉じる', on_click=r'D:\Other\ffgai-main\ffgai-main\open.pyw')
-
-        elif not before.self_mute and after.self_mute:
-            if me.voice:
-                file_name = "icon.png"
-                response = requests.get(member.avatar.url)
-                image = response.content
-                with open(file_name, "wb") as f:
-                    f.write(image)
-                icon_path = 'icon.png'
-                mute_path = 'mute.png'
-                out_path = 'icon_mute.png'
-                icon = Image.open(icon_path)
-                mute = Image.open(mute_path)
-                icon = icon.resize((600, 600))
-                icon.paste(mute, (0, 0), mute)
-                icon.save(out_path)
-                await toast_async(f"{member.display_name} (#{after.channel.name})", f"🔇ミュートしました", icon=r"D:\Other\ffgai-main\ffgai-main\icon_mute.png", duration='short', audio={'silent': 'true'}, button='閉じる', on_click=r'D:\Other\ffgai-main\ffgai-main\open.pyw')
-                
-        
-        elif before.self_mute and not after.self_mute:
-            if me.voice:
-                file_name = "icon.png"
-                response = requests.get(member.avatar.url)
-                image = response.content
-                with open(file_name, "wb") as f:
-                    f.write(image)
-                icon_path = 'icon.png'
-                unmute_path = 'unmute.png'
-                out_path = 'icon_unmute.png'
-                icon = Image.open(icon_path)
-                unmute = Image.open(unmute_path)
-                icon = icon.resize((600, 600))
-                icon.paste(unmute, (0, 0), unmute)
-                icon.save(out_path)
-                await toast_async(f"{member.display_name} (#{after.channel.name})", f"🔊 ミュートを解除しました", icon=r"D:\Other\ffgai-main\ffgai-main\icon_unmute.png", duration='short', audio={'silent': 'true'}, button='閉じる', on_click=r'D:\Other\ffgai-main\ffgai-main\open.pyw')
-
-@bot.event
-async def on_message_delete(message):
-    snipe_message_author[message.channel.id] = message.author
-    snipe_message_content[message.channel.id] = message.content
-    await asyncio.sleep(60)
-    del snipe_message_author[message.channel.id]
-    del snipe_message_content[message.channel.id]
-
-@bot.command(name = 'snipe')
-async def snipe(ctx):
-    channel = ctx.channel
-    try: #This piece of code is run if the bot finds anything in the dictionary
-        em = discord.Embed(title = snipe_message_content[channel.id], color=discord.Color.blue())
-        em.set_footer(text = f"{snipe_message_author[channel.id]} が送信しました")
-
-        await ctx.send(embed = em)
-    except KeyError: #This piece of code is run if the bot doesn't find anything in the dictionary
-        await ctx.send("最近削除されたメッセージはありません")
-
-@bot.command()
-@commands.has_permissions(ban_members=True)
-async def delmsg(ctx, target:int):
-    channel = ctx.message.channel
-    deleted = await channel.purge(limit=target)
-    delmsg = discord.Embed(title="メッセージの削除が完了しました。",description=f"```{len(deleted)}メッセージを削除しました。```",color=0xa1b3b5)
-    delmsg.set_author(name="The message deletion is complete",icon_url="https://media.discordapp.net/attachments/889860265896722442/892047450754416650/Delete.png")
-    await ctx.send(embed=delmsg)
 
 previous_output = None
 
@@ -237,66 +150,5 @@ async def on_message(message):
                 await message.reply(random_word, mention_author=False)
                 previous_output = random_word
 
-def calculate_percentage_of_year():
-    current_date = datetime.date.today()
-    year_start_date = datetime.date(current_date.year, 1, 1)
-    year_end_date = datetime.date(current_date.year, 12, 31)
-    days_passed = (current_date - year_start_date).days
-    total_days_in_year = (year_end_date - year_start_date).days + 1
-    percentage = (days_passed / total_days_in_year) * 100
-    return percentage
-
-def calculate_percentage_of_day():
-    now = datetime.datetime.now()
-    midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    total_day_time = datetime.timedelta(days=1)
-    time_passed = now - midnight
-    percentage = (time_passed.total_seconds() / total_day_time.total_seconds()) * 100
-    return percentage
-
-def create_progress_bar(value, max_value, bar_length=25):
-    progress = value / max_value
-    num_bar_hashes = int(round(bar_length * progress))
-    bar = '#' * num_bar_hashes + '-' * (bar_length - num_bar_hashes)
-    return f"[{bar}] {value:.2f}%"
-
-max_value = 100
-percentage_of_year = calculate_percentage_of_year()
-percentage_of_day = calculate_percentage_of_day()
-
-async def animate_progress(ctx, channel):
-    num_frames = 5
-    percentage_of_year = calculate_percentage_of_year()
-    percentage_of_day = calculate_percentage_of_day()
-    embed = discord.Embed(color=0x2997ff ,description="")
-    embed.set_footer(text="開始")
-    msg = await channel.send(embed=embed)
-
-    for frame in range(num_frames + 1):
-        current_percentage_year = (percentage_of_year * frame) / num_frames
-        current_percentage_day = (percentage_of_day * frame) / num_frames
-        channel = ctx.channel
-        animation_chars = ['.', '..', '...']
-        animation = animation_chars[frame % len(animation_chars)]
-        progress_bar1 = create_progress_bar(current_percentage_year, max_value)
-        progress_bar2 = create_progress_bar(current_percentage_day, max_value)
-        embed = discord.Embed(color=0x2997ff)
-        embed.add_field(name="1年の進行状況", value=f"```{progress_bar1}```", inline=False)
-        embed.add_field(name="1日の進行状況", value=f"```{progress_bar2}```", inline=False)
-        embed.set_footer(text=f"進行中{animation}")
-        await msg.edit(embed=embed)
-
-    embed1 = discord.Embed(color=0x2997ff ,description="")
-    progress_bar1 = create_progress_bar(current_percentage_year, max_value)
-    progress_bar2 = create_progress_bar(current_percentage_day, max_value)
-    embed1 = discord.Embed(color=0x2997ff)
-    embed1.add_field(name="1年間の進行状況", value=f"```fix\n{progress_bar1}\n```", inline=False)
-    embed1.add_field(name="1日の進行状況", value=f"```fix\n{progress_bar2}\n```", inline=False)
-    await msg.edit(embed=embed1)
-
-@bot.command(name='time')
-async def progress(ctx):
-    # Start the animation when the command is executed
-    await animate_progress(ctx, ctx.channel)
 
 bot.run(TOKEN)
