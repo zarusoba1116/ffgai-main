@@ -6,6 +6,7 @@ import asyncio
 import time
 import json
 from Word_list import words
+import os
 
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
 json_open = open('data.json', 'r')
