@@ -5,8 +5,6 @@ from discord.ext import commands
 import asyncio
 import time
 import json
-import requests
-from PIL import Image
 from Word_list import words
 
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
