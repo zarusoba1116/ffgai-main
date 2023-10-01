@@ -3,7 +3,6 @@ import random
 import discord
 from discord.ext import commands
 import asyncio
-from win11toast import toast_async
 import time
 import json
 import requests
