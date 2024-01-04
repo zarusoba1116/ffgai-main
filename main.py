@@ -7,12 +7,9 @@ import time
 import json
 from Word_list import words
 import os
-from keep_alive import keep_alive
 
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
-json_open = open('data.json', 'r')
-json_data = json.load(json_open)
-TOKEN = os.getenv("DISCORD_TOKEN")
+TOKEN = ""
 intents = discord.Intents.all()
 intents.typing = False
 guild = 852145141909159947
@@ -28,12 +25,13 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    elif message.channel.id == 1015272719606104064:
-        if '<@' in message.content:
-            guild = bot.get_guild(message.guild.id)
-            user_id_list = re.findall(r'@[0-9]{18}', message.content)
-            user_id_list = list(map(lambda x: int(x.replace('@', '')), user_id_list))
-            for user_id in user_id_list:
+    elif message.channel.id == 1189922398049402890:
+        if message.mentions:
+            for user_mention in message.mentions:
+                json_open = open('data.json', 'r')
+                json_data = json.load(json_open)
+                guild = bot.get_guild(message.guild.id)
+                user_id = user_mention.id
                 user = guild.get_member(user_id)
                 count = json_data
                 count.setdefault(str(user_id), 0)
@@ -42,10 +40,8 @@ async def on_message(message):
                 with open("data.json", "w") as f:
                     json.dump(count, f)
                 t = int(time.time())
-                print(user_id)
-                print(user)
                 embed=discord.Embed(title="寝落ち報告", color=0x2997ff)
-                embed.set_thumbnail(url=user.avatar.url)
+                embed.set_thumbnail(url=user.avatar_url)
                 embed.add_field(name="名前", value='<@' + str(user_id) + '>', inline=True)
                 embed.add_field(name="チャンネル", value='<#' + str(user.voice.channel.id) + '>', inline=True)
                 embed.add_field(name="時間", value='<t:' + str(t) + '>', inline=True)
@@ -57,10 +53,6 @@ async def on_message(message):
         else:
             await message.delete()
 
-    elif message.channel.id == 1045655314428608562:
-        guild = bot.get_guild(852145141909159947)
-        channel = guild.get_channel(852145141909159950)
-        await channel.send(message.content)
 
     elif re.match(pattern, url) or message.attachments:
         if random.randint(1,100) < 25:
@@ -121,32 +113,22 @@ async def on_message(message):
             global previous_output
             if "$" in message.content:
                 return
-            test = random.randint(1,100)
-            print(test)
             input_str = message.content
-            print(input_str)
             kanji_list = kanji_regex.findall(input_str)
-            print(kanji_list)
             kanji_str = ''.join(kanji_list)
-            print(kanji_str)
             found_words = [word for word in words if any(char in kanji_str for char in word)]
-            print(found_words)
             if found_words:
                 random_word = random.choice(found_words)
-                print(random_word)
                 if random_word != previous_output and input_str not in words:
                     await message.reply(random_word, mention_author=False)
                     previous_output = random_word
                 else:
                     random_word = random.choice(words)
-                    print(random_word)
                     await message.reply(random_word, mention_author=False)
                     previous_output = random_word
             else: 
                 random_word = random.choice(words)
-                print(random_word)
                 await message.reply(random_word, mention_author=False)
                 previous_output = random_word
 
-keep_alive()
 bot.run(TOKEN)
