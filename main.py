@@ -6,8 +6,9 @@ import asyncio
 import time
 import json
 from Word_list import words
-import os
+from os import getenv
 
+TOKEN = getenv('DISCORD_BOT_TOKEN')
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
 intents = discord.Intents.all()
 intents.typing = False
