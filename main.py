@@ -28,21 +28,21 @@ async def on_message(message):
     elif message.channel.id == 1189922398049402890:
         if message.mentions:
             for user_mention in message.mentions:
-                json_open = open('data.json', 'r')
-                json_data = json.load(json_open)
-                guild = bot.get_guild(message.guild.id)
-                user_id = user_mention.id
-                user = guild.get_member(user_id)
-                avatar_url = user.avatar.url
-                count = json_data
-                count.setdefault(str(user_id), 0)
-                load_count = json_data[str(user_id)]
-                count[str(user_id)] = 1 + load_count
+                with open('data.json', 'r') as json_open:
+                    json_data = json.load(json_open)
+                    guild = bot.get_guild(message.guild.id)
+                    user_id = user_mention.id
+                    user = guild.get_member(user_id)
+                    avatar_url = user.avatar.url
+                    count = json_data
+                    count.setdefault(str(user_id), 0)
+                    load_count = json_data[str(user_id)]
+                    count[str(user_id)] = 1 + load_count
                 with open("data.json", "w") as f:
                     json.dump(count, f)
                 t = int(time.time())
                 print(user.name)
-                embed=discord.Embed(title="寝落ち報告", color=0x2997ff)
+                embed = discord.Embed(title="寝落ち報告", color=0x2997ff)
                 embed.set_thumbnail(url=avatar_url)
                 embed.add_field(name="名前", value=user.mention, inline=True)
                 embed.add_field(name="チャンネル", value='<#' + str(user.voice.channel.id) + '>', inline=True)
