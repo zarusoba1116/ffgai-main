@@ -33,7 +33,7 @@ async def on_message(message):
                 guild = bot.get_guild(message.guild.id)
                 user_id = user_mention.id
                 user = guild.get_member(user_id)
-                avatar_url = user.avatar_url
+                avatar_url = user.avatar.url
                 count = json_data
                 count.setdefault(str(user_id), 0)
                 load_count = json_data[str(user_id)]
