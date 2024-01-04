@@ -40,9 +40,10 @@ async def on_message(message):
                 with open("data.json", "w") as f:
                     json.dump(count, f)
                 t = int(time.time())
+                print(user.name)
                 embed=discord.Embed(title="寝落ち報告", color=0x2997ff)
                 embed.set_thumbnail(url=user.avatar_url)
-                embed.add_field(name="名前", value='<@' + str(user_id) + '>', inline=True)
+                embed.add_field(name="名前", value=user.name, inline=True)
                 embed.add_field(name="チャンネル", value='<#' + str(user.voice.channel.id) + '>', inline=True)
                 embed.add_field(name="時間", value='<t:' + str(t) + '>', inline=True)
                 load_count = json_data[str(user_id)]
