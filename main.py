@@ -9,7 +9,6 @@ from Word_list import words
 import os
 
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
-TOKEN = ""
 intents = discord.Intents.all()
 intents.typing = False
 guild = 852145141909159947
