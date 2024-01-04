@@ -33,6 +33,7 @@ async def on_message(message):
                 guild = bot.get_guild(message.guild.id)
                 user_id = user_mention.id
                 user = guild.get_member(user_id)
+                avatar_url = user.avatar_url
                 count = json_data
                 count.setdefault(str(user_id), 0)
                 load_count = json_data[str(user_id)]
@@ -42,7 +43,7 @@ async def on_message(message):
                 t = int(time.time())
                 print(user.name)
                 embed=discord.Embed(title="寝落ち報告", color=0x2997ff)
-                embed.set_thumbnail(url=user.avatar_url)
+                embed.set_thumbnail(url=avatar_url)
                 embed.add_field(name="名前", value=user.name, inline=True)
                 embed.add_field(name="チャンネル", value='<#' + str(user.voice.channel.id) + '>', inline=True)
                 embed.add_field(name="時間", value='<t:' + str(t) + '>', inline=True)
