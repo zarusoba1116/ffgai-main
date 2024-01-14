@@ -33,7 +33,6 @@ async def on_message(message):
                 user_id = user_mention.id
                 user = guild.get_member(user_id)
                 avatar_url = user.avatar.url
-
                 count = json_data["SleepCounts"]
                 count.setdefault(str(user_id), 0)
                 load_count = count.get(user_id, 0)
