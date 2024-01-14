@@ -22,6 +22,7 @@ async def on_message(message):
     with open('data.json', 'r') as json_open:
         json_data = json.load(json_open)
         ServerBlackList = json_data["ServerBlackList"]
+
     guild = bot.get_guild(message.guild.id)
     pattern = "https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
     url = message.content
@@ -113,7 +114,7 @@ async def on_message(message):
         await message.channel.send("ホモはせっかち、はっきりわかんだね")
 
     else:
-        if message.channel.id != ServerBlackList:
+        if message.guild.id != ServerBlackList:
             if random.randint(1,100) < 50:
                 global previous_output
                 if "$" in message.content:
