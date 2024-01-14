@@ -58,63 +58,60 @@ async def on_message(message):
         else:
             await message.delete()
 
-
-    elif re.match(pattern, url) or message.attachments:
-        if random.randint(1,100) < 25:
-            reactions = ['❤️', '♻️']
-            text_1 = "FF外から失礼するゾ～（突撃）この乱戦面白スギィ！！！！！"
-            text_2 = "FF外から失礼するゾ～（謝罪）このリンク先面白スギィ！！！！！"
-            text_3 = "FF外から失礼するゾ～（謝罪）この画像面白スギィ！！！！！"
-            sentence_1 = "自分、漁夫いいっすか？ 秘密知ってそうだから収容所にブチ込んでやるぜー"
-            sentence_2 = "自分、拡散いいっすか？ 淫夢知ってそうだから淫夢のリストにぶち込んでやるぜー"
-            sentence_3 = "いきなり撃ってすいません！許して下さい、なんでもしますから！(なんでもするとは言ってない)"
-            sentence_4 = "いきなりリプしてすみません！許してください！なんでもしますから！(なんでもするとは言ってない)"
-            if message.attachments:
-                for attachment in message.attachments:
-                    if attachment.url.endswith(("png", "jpg", "jpeg")):
-                        for reaction in reactions:
-                            await message.add_reaction(reaction)
-                        if random.randint(1,100) < 5:
-                            async with message.channel.typing():
-                                await asyncio.sleep(0.5)
-                                await message.channel.send(text_1)
-                                await asyncio.sleep(0.5)
-                                await message.channel.send(sentence_1)
-                                await asyncio.sleep(0.5)
-                                await message.channel.send(sentence_3)      
-                        else:
-                            async with message.channel.typing():
-                                await asyncio.sleep(0.5)
-                                await message.channel.send(text_3)
-                                await asyncio.sleep(0.5)
-                                await message.channel.send(sentence_2)
-                                await asyncio.sleep(0.5)
-                                await message.channel.send(sentence_4)
-            else:
-                for reaction in reactions:
-                    await message.add_reaction(reaction)
-                if random.randint(1,100) < 5:
-                    async with message.channel.typing():
-                        await asyncio.sleep(0.5)
-                        await message.channel.send(text_1)
-                        await asyncio.sleep(0.5)
-                        await message.channel.send(sentence_1)
-                        await asyncio.sleep(0.5)
-                        await message.channel.send(sentence_3)       
+    if message.guild.id not in ServerBlackList:
+        
+        if re.match(pattern, url) or message.attachments:
+            if random.randint(1,100) < 25:
+                reactions = ['❤️', '♻️']
+                text_1 = "FF外から失礼するゾ～（突撃）この乱戦面白スギィ！！！！！"
+                text_2 = "FF外から失礼するゾ～（謝罪）このリンク先面白スギィ！！！！！"
+                text_3 = "FF外から失礼するゾ～（謝罪）この画像面白スギィ！！！！！"
+                sentence_1 = "自分、漁夫いいっすか？ 秘密知ってそうだから収容所にブチ込んでやるぜー"
+                sentence_2 = "自分、拡散いいっすか？ 淫夢知ってそうだから淫夢のリストにぶち込んでやるぜー"
+                sentence_3 = "いきなり撃ってすいません！許して下さい、なんでもしますから！(なんでもするとは言ってない)"
+                sentence_4 = "いきなりリプしてすみません！許してください！なんでもしますから！(なんでもするとは言ってない)"
+                if message.attachments:
+                    for attachment in message.attachments:
+                        if attachment.url.endswith(("png", "jpg", "jpeg")):
+                            for reaction in reactions:
+                                await message.add_reaction(reaction)
+                            if random.randint(1,100) < 5:
+                                async with message.channel.typing():
+                                    await asyncio.sleep(0.5)
+                                    await message.channel.send(text_1)
+                                    await asyncio.sleep(0.5)
+                                    await message.channel.send(sentence_1)
+                                    await asyncio.sleep(0.5)
+                                    await message.channel.send(sentence_3)      
+                            else:
+                                async with message.channel.typing():
+                                    await asyncio.sleep(0.5)
+                                    await message.channel.send(text_3)
+                                    await asyncio.sleep(0.5)
+                                    await message.channel.send(sentence_2)
+                                    await asyncio.sleep(0.5)
+                                    await message.channel.send(sentence_4)
                 else:
-                    async with message.channel.typing():
-                        await asyncio.sleep(0.5)
-                        await message.channel.send(text_2)
-                        await asyncio.sleep(0.5)
-                        await message.channel.send(sentence_2)
-                        await asyncio.sleep(0.5)
-                        await message.channel.send(sentence_4)
+                    for reaction in reactions:
+                        await message.add_reaction(reaction)
+                    if random.randint(1,100) < 5:
+                        async with message.channel.typing():
+                            await asyncio.sleep(0.5)
+                            await message.channel.send(text_1)
+                            await asyncio.sleep(0.5)
+                            await message.channel.send(sentence_1)
+                            await asyncio.sleep(0.5)
+                            await message.channel.send(sentence_3)       
+                    else:
+                        async with message.channel.typing():
+                            await asyncio.sleep(0.5)
+                            await message.channel.send(text_2)
+                            await asyncio.sleep(0.5)
+                            await message.channel.send(sentence_2)
+                            await asyncio.sleep(0.5)
+                            await message.channel.send(sentence_4)
 
-    elif bot.user in message.mentions:
-        await message.channel.send("ホモはせっかち、はっきりわかんだね")
-
-    else:
-        if message.guild.id not in ServerBlackList:
+        else:
             if random.randint(1,100) < 50:
                 global previous_output
                 if "$" in message.content:
