@@ -12,7 +12,6 @@ TOKEN = getenv('DISCORD_BOT_TOKEN')
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
 intents = discord.Intents.all()
 intents.typing = False
-guild = 852145141909159947
 
 bot = commands.Bot(command_prefix='$',help_command=None,case_insensitive=True,intents=intents)
 
@@ -20,6 +19,7 @@ previous_output = None
 
 @bot.listen("on_message")
 async def on_message(message):
+    guild = bot.get_guild(message.guild.id)
     pattern = "https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
     url = message.content
     if message.author.bot:
@@ -30,7 +30,6 @@ async def on_message(message):
             for user_mention in message.mentions:
                 with open('data.json', 'r') as json_open:
                     json_data = json.load(json_open)
-                    guild = bot.get_guild(message.guild.id)
                     user_id = user_mention.id
                     user = guild.get_member(user_id)
                     avatar_url = user.avatar.url
@@ -111,26 +110,26 @@ async def on_message(message):
         await message.channel.send("ホモはせっかち、はっきりわかんだね")
 
     else:
-        if random.randint(1,100) < 50:
-            global previous_output
-            if "$" in message.content:
-                return
-            input_str = message.content
-            kanji_list = kanji_regex.findall(input_str)
-            kanji_str = ''.join(kanji_list)
-            found_words = [word for word in words if any(char in kanji_str for char in word)]
-            if found_words:
-                random_word = random.choice(found_words)
-                if random_word != previous_output and input_str not in words:
-                    await message.reply(random_word, mention_author=False)
-                    previous_output = random_word
-                else:
+            if random.randint(1,100) < 50:
+                global previous_output
+                if "$" in message.content:
+                    return
+                input_str = message.content
+                kanji_list = kanji_regex.findall(input_str)
+                kanji_str = ''.join(kanji_list)
+                found_words = [word for word in words if any(char in kanji_str for char in word)]
+                if found_words:
+                    random_word = random.choice(found_words)
+                    if random_word != previous_output and input_str not in words:
+                        await message.reply(random_word, mention_author=False)
+                        previous_output = random_word
+                    else:
+                        random_word = random.choice(words)
+                        await message.reply(random_word, mention_author=False)
+                        previous_output = random_word
+                else: 
                     random_word = random.choice(words)
                     await message.reply(random_word, mention_author=False)
                     previous_output = random_word
-            else: 
-                random_word = random.choice(words)
-                await message.reply(random_word, mention_author=False)
-                previous_output = random_word
 
 bot.run(TOKEN)
