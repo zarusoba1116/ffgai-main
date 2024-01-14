@@ -30,15 +30,16 @@ async def on_message(message):
             for user_mention in message.mentions:
                 with open('data.json', 'r') as json_open:
                     json_data = json.load(json_open)
-                    user_id = user_mention.id
-                    user = guild.get_member(user_id)
-                    avatar_url = user.avatar.url
-                    count = json_data
-                    count.setdefault(str(user_id), 0)
-                    load_count = json_data[str(user_id)]
-                    count[str(user_id)] = 1 + load_count
+                user_id = user_mention.id
+                user = guild.get_member(user_id)
+                avatar_url = user.avatar.url
+
+                count = json_data["SleepCounts"]
+                count.setdefault(str(user_id), 0)
+                load_count = count[str(user_id)]
+                count[str(user_id)] = 1 + load_count
                 with open("data.json", "w") as f:
-                    json.dump(count, f)
+                    json.dump({"SleepCounts": count, "ServerBlackList": json_data["ServerBlackList"]}, f, indent=4)
                 t = int(time.time())
                 print(user.name)
                 embed = discord.Embed(title="寝落ち報告", color=0x2997ff)
