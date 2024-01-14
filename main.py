@@ -30,15 +30,15 @@ async def on_message(message):
             for user_mention in message.mentions:
                 with open('data.json', 'r') as json_open:
                     json_data = json.load(json_open)
-                user_id = user_mention.id
-                user = guild.get_member(user_id)
-                avatar_url = user.avatar.url
-                count = json_data["SleepCounts"]
-                count.setdefault(str(user_id), 0)
-                load_count = count.get(user_id, 0)
-                count[str(user_id)] = 1 + load_count
+                    user_id = user_mention.id
+                    user = guild.get_member(user_id)
+                    avatar_url = user.avatar.url
+                    count = json_data["SleepCounts"]
+                    count.setdefault(str(user_id), 0)
+                    load_count = json_data["SleepCounts"][str(user_id)]
+                    count[str(user_id)] = 1 + load_count
                 with open("data.json", "w") as f:
-                    json.dump({"SleepCounts": count, "ServerBlackList": json_data["ServerBlackList"]}, f, indent=4)
+                    json.dump(count, f)
                 t = int(time.time())
                 print(user.name)
                 embed = discord.Embed(title="寝落ち報告", color=0x2997ff)
@@ -46,7 +46,7 @@ async def on_message(message):
                 embed.add_field(name="名前", value=user.mention, inline=True)
                 embed.add_field(name="チャンネル", value='<#' + str(user.voice.channel.id) + '>', inline=True)
                 embed.add_field(name="時間", value='<t:' + str(t) + '>', inline=True)
-                load_count = json_data[str(user_id)]
+                load_count = json_data["SleepCounts"][str(user_id)]
                 embed.add_field(name="合計寝落ち回数", value='```' + str(load_count) + '回```', inline=True)
                 embed.set_footer(text="いろんなともとも 寝落ち報告スレ")
                 await message.channel.send(embed=embed)
