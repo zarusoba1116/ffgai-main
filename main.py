@@ -48,7 +48,7 @@ async def on_message(message):
                 embed.add_field(name="時間", value='<t:' + str(t) + '>', inline=True)
                 load_count = json_data["SleepCounts"][str(user_id)]
                 embed.add_field(name="合計寝落ち回数", value='```' + str(load_count) + '回```', inline=True)
-                embed.set_footer(text=guild.name + " " + message.channel.name)
+                embed.set_footer(text="いろんなともとも 寝落ち報告スレ")
                 await message.channel.send(embed=embed)
                 await message.delete()
         else:
