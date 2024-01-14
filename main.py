@@ -38,7 +38,7 @@ async def on_message(message):
                     load_count = json_data["SleepCounts"][str(user_id)]
                     count[str(user_id)] = 1 + load_count
                 with open("data.json", "w") as f:
-                    json.dump(count, f)
+                    json.dump({"SleepCounts": count, "ServerBlackList": json_data["ServerBlackList"]}, f, indent=4)
                 t = int(time.time())
                 print(user.name)
                 embed = discord.Embed(title="寝落ち報告", color=0x2997ff)
