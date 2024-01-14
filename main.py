@@ -114,7 +114,7 @@ async def on_message(message):
         await message.channel.send("ホモはせっかち、はっきりわかんだね")
 
     else:
-        if message.guild.id != ServerBlackList:
+        if message.guild.id not in ServerBlackList:
             if random.randint(1,100) < 50:
                 global previous_output
                 if "$" in message.content:
