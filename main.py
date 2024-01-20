@@ -29,20 +29,41 @@ async def on_message(message):
     if message.author.bot:
         return
 
+import discord
+import json
+import time
+
+# 他の必要なモジュールや設定もここに追加してください
+
+# 以前のコードと同じ部分
+client = discord.Client()
+
+@client.event
+async def on_message(message):
+    if message.author.bot:
+        return
     elif message.channel.id in [1189922398049402890, 1183748739366662176]:
         if message.mentions:
             for user_mention in message.mentions:
-                with open('data.json', 'r') as json_open:
-                    json_data = json.load(json_open)
-                    user_id = user_mention.id
-                    user = guild.get_member(user_id)
-                    avatar_url = user.avatar.url
-                    count = json_data["SleepCounts"]
-                    count.setdefault(str(user_id), 0)
-                    load_count = json_data["SleepCounts"][str(user_id)]
-                    count[str(user_id)] = 1 + load_count
-                with open("data.json", "w") as f:
-                    json.dump({"SleepCounts": count, "ServerBlackList": json_data["ServerBlackList"]}, f, indent=4)
+                try:
+                    with open('data.json', 'r') as json_open:
+                        json_data = json.load(json_open)
+                        user_id = user_mention.id
+                        user = guild.get_member(user_id)
+                        avatar_url = user.avatar.url
+                        count = json_data["SleepCounts"]
+                        count.setdefault(str(user_id), 0)
+                        load_count = json_data["SleepCounts"][str(user_id)]
+                        count[str(user_id)] = 1 + load_count
+                    with open("data.json", "w") as f:
+                        json.dump({"SleepCounts": count, "ServerBlackList": json_data["ServerBlackList"]}, f, indent=4)
+                except FileNotFoundError:
+                    print("ファイル 'data.json' が見つかりません。")
+                except PermissionError:
+                    print("'data.json' にアクセスする際に権限エラーが発生しました。")
+                except Exception as e:
+                    print(f"エラーが発生しました: {e}")
+
                 t = int(time.time())
                 print(user.name)
                 embed = discord.Embed(title="寝落ち報告", color=0x2997ff)
@@ -57,7 +78,7 @@ async def on_message(message):
                 await message.delete()
         else:
             await message.delete()
-
+            
     if message.guild.id not in ServerBlackList:
         
         if re.match(pattern, url) or message.attachments:
