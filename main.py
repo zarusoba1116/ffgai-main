@@ -24,6 +24,7 @@ def load_data():
         return {"SleepCounts": {}, "ServerBlackList": []}
 
 def save_data(data):
+    print("called")
     try:
         with open("data.json", "w") as f:
             json.dump(data, f, indent=4)
