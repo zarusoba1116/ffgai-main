@@ -58,6 +58,7 @@ async def on_message(message):
 
                 data["SleepCounts"] = count
                 save_data(data)
+                print("save_data function called")
 
                 t = int(time.time())
                 print(user.name)
