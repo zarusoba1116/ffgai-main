@@ -19,6 +19,7 @@ previous_output = None
 
 @bot.listen("on_message")
 async def on_message(message):
+    # JSONファイルの読み込み
     with open('data.json', 'r') as json_open:
         json_data = json.load(json_open)
         ServerBlackList = json_data["ServerBlackList"]
@@ -26,23 +27,29 @@ async def on_message(message):
     guild = bot.get_guild(message.guild.id)
     pattern = "https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
     url = message.content
+
+    # ボットのメッセージを無視
     if message.author.bot:
         return
 
+    # 特定のチャンネルでの処理
     elif message.channel.id in [1189922398049402890, 1183748739366662176, 876362300632760342]:
         if message.mentions:
             for user_mention in message.mentions:
-                with open('data.json', 'r') as json_open:
-                    json_data = json.load(json_open)
-                    user_id = user_mention.id
-                    user = guild.get_member(user_id)
-                    avatar_url = user.avatar.url
-                    count = json_data["SleepCounts"]
-                    count.setdefault(str(user_id), 0)
-                    load_count = json_data["SleepCounts"][str(user_id)]
-                    count[str(user_id)] = 1 + load_count
+                user_id = user_mention.id
+                user = guild.get_member(user_id)
+                avatar_url = user.avatar.url
+
+                # JSONデータの処理
+                count = json_data["SleepCounts"]
+                count.setdefault(str(user_id), 0)
+                load_count = json_data["SleepCounts"][str(user_id)]
+                count[str(user_id)] = 1 + load_count
+
+                # JSONファイルの上書き保存
                 with open("data.json", "w") as f:
-                    json.dump({"SleepCounts": count, "ServerBlackList": json_data["ServerBlackList"]}, f, indent=4)
+                    json.dump({"SleepCounts": count, "ServerBlackList": ServerBlackList}, f, indent=4)
+
                 t = int(time.time())
                 print(user.name)
                 embed = discord.Embed(title="寝落ち報告", color=0x2997ff)
