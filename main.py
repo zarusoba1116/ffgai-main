@@ -26,6 +26,7 @@ def load_data():
 def save_data(data):
     with open("data.json", "w") as f:
         json.dump(data, f, indent=4)
+        print("saved")
 
 @bot.listen("on_message")
 async def on_message(message):
