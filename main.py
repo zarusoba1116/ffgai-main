@@ -140,5 +140,11 @@ async def on_message(message):
                     random_word = random.choice(words)
                     await message.reply(random_word, mention_author=False)
                     previous_output = random_word
+                    
+@bot.event
+async def on_reaction_add(reaction, user):
+    if user == bot.user:  # ボット自身のリアクションを確認
+        await reaction.message.delete()
+
 
 bot.run(TOKEN)
