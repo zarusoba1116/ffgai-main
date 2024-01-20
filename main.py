@@ -13,42 +13,45 @@ kanji_regex = re.compile(r'[\u4e00-\u9fff]')
 intents = discord.Intents.all()
 intents.typing = False
 
-bot = commands.Bot(command_prefix='$',help_command=None,case_insensitive=True,intents=intents)
+bot = commands.Bot(command_prefix='$', help_command=None, case_insensitive=True, intents=intents)
 
-previous_output = None
+def load_data():
+    try:
+        with open('data.json', 'r') as json_open:
+            return json.load(json_open)
+    except FileNotFoundError:
+        # 初回起動時など、ファイルが存在しない場合は空のデータを返す
+        return {"SleepCounts": {}, "ServerBlackList": []}
+
+def save_data(data):
+    with open("data.json", "w") as f:
+        json.dump(data, f, indent=4)
 
 @bot.listen("on_message")
 async def on_message(message):
-    with open('data.json', 'r') as json_open:
-        json_data = json.load(json_open)
-        ServerBlackList = json_data["ServerBlackList"]
+    data = load_data()
+    ServerBlackList = data["ServerBlackList"]
 
     guild = bot.get_guild(message.guild.id)
     pattern = "https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
     url = message.content
+
     if message.author.bot:
         return
     elif message.channel.id in [1189922398049402890, 1183748739366662176]:
         if message.mentions:
             for user_mention in message.mentions:
-                try:
-                    with open('data.json', 'r') as json_open:
-                        json_data = json.load(json_open)
-                        user_id = user_mention.id
-                        user = guild.get_member(user_id)
-                        avatar_url = user.avatar.url
-                        count = json_data["SleepCounts"]
-                        count.setdefault(str(user_id), 0)
-                        load_count = json_data["SleepCounts"][str(user_id)]
-                        count[str(user_id)] = 1 + load_count
-                    with open("data.json", "w") as f:
-                        json.dump({"SleepCounts": count, "ServerBlackList": json_data["ServerBlackList"]}, f, indent=4)
-                except FileNotFoundError:
-                    print("ファイル 'data.json' が見つかりません。")
-                except PermissionError:
-                    print("'data.json' にアクセスする際に権限エラーが発生しました。")
-                except Exception as e:
-                    print(f"エラーが発生しました: {e}")
+                user_id = user_mention.id
+                user = guild.get_member(user_id)
+                avatar_url = user.avatar.url
+
+                count = data["SleepCounts"]
+                count.setdefault(str(user_id), 0)
+                load_count = count[str(user_id)]
+                count[str(user_id)] = 1 + load_count
+
+                data["SleepCounts"] = count
+                save_data(data)
 
                 t = int(time.time())
                 print(user.name)
@@ -56,14 +59,14 @@ async def on_message(message):
                 embed.set_thumbnail(url=avatar_url)
                 embed.add_field(name="名前", value=user.mention, inline=True)
                 embed.add_field(name="チャンネル", value='<#' + str(user.voice.channel.id) + '>', inline=True)
-                embed.add_field(name="時間", value='<t:' + str(t) + '>', inline=True)
-                load_count = json_data["SleepCounts"][str(user_id)]
-                embed.add_field(name="合計寝落ち回数", value='```' + str(load_count) + '回```', inline=True)
-                embed.set_footer(text=guild.name + " " + message.channel.name)
+                embed.add_field(name="時間", value=f'<t:{t}>', inline=True)
+                embed.add_field(name="合計寝落ち回数", value=f'```{load_count}回```', inline=True)
+                embed.set_footer(text=f'{guild.name} {message.channel.name}')
                 await message.channel.send(embed=embed)
                 await message.delete()
         else:
             await message.delete()
+
             
     if message.guild.id not in ServerBlackList:
         
