@@ -13,68 +13,51 @@ kanji_regex = re.compile(r'[\u4e00-\u9fff]')
 intents = discord.Intents.all()
 intents.typing = False
 
-bot = commands.Bot(command_prefix='$', help_command=None, case_insensitive=True, intents=intents)
+bot = commands.Bot(command_prefix='$',help_command=None,case_insensitive=True,intents=intents)
 
-def load_data():
-    try:
-        with open('data.json', 'r') as json_open:
-            return json.load(json_open)
-    except FileNotFoundError:
-        # 初回起動時など、ファイルが存在しない場合は空のデータを返す
-        return {"SleepCounts": {}, "ServerBlackList": []}
-
-def save_data(data):
-    print("called")
-    try:
-        with open("data.json", "w") as f:
-            json.dump(data, f, indent=4)
-            f.flush()  # バッファのフラッシュ
-        print("saved")
-    except Exception as e:
-        print(f"Error saving data: {e}")
+previous_output = None
 
 @bot.listen("on_message")
 async def on_message(message):
-    data = load_data()
-    ServerBlackList = data["ServerBlackList"]
+    with open('data.json', 'r') as json_open:
+        json_data = json.load(json_open)
+        ServerBlackList = json_data["ServerBlackList"]
 
     guild = bot.get_guild(message.guild.id)
     pattern = "https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
     url = message.content
-
     if message.author.bot:
         return
-    elif message.channel.id in [1189922398049402890, 1183748739366662176, 876362300632760342]:
+
+    elif message.channel.id in [1189922398049402890, 1183748739366662176]:
         if message.mentions:
             for user_mention in message.mentions:
-                user_id = user_mention.id
-                user = guild.get_member(user_id)
-                avatar_url = user.avatar.url
-
-                count = data["SleepCounts"]
-                count.setdefault(str(user_id), 0)
-                load_count = count[str(user_id)]
-                count[str(user_id)] = 1 + load_count
-
-                data["SleepCounts"] = count
-                save_data(data)
-                print("save_data function called")
-
+                with open('data.json', 'r') as json_open:
+                    json_data = json.load(json_open)
+                    user_id = user_mention.id
+                    user = guild.get_member(user_id)
+                    avatar_url = user.avatar.url
+                    count = json_data["SleepCounts"]
+                    count.setdefault(str(user_id), 0)
+                    load_count = json_data["SleepCounts"][str(user_id)]
+                    count[str(user_id)] = 1 + load_count
+                with open("data.json", "w") as f:
+                    json.dump({"SleepCounts": count, "ServerBlackList": json_data["ServerBlackList"]}, f, indent=4)
                 t = int(time.time())
                 print(user.name)
                 embed = discord.Embed(title="寝落ち報告", color=0x2997ff)
                 embed.set_thumbnail(url=avatar_url)
                 embed.add_field(name="名前", value=user.mention, inline=True)
                 embed.add_field(name="チャンネル", value='<#' + str(user.voice.channel.id) + '>', inline=True)
-                embed.add_field(name="時間", value=f'<t:{t}>', inline=True)
-                embed.add_field(name="合計寝落ち回数", value=f'```{load_count}回```', inline=True)
-                embed.set_footer(text=f'{guild.name} {message.channel.name}')
+                embed.add_field(name="時間", value='<t:' + str(t) + '>', inline=True)
+                load_count = json_data["SleepCounts"][str(user_id)]
+                embed.add_field(name="合計寝落ち回数", value='```' + str(load_count) + '回```', inline=True)
+                embed.set_footer(text=guild.name + " " + message.channel.name)
                 await message.channel.send(embed=embed)
                 await message.delete()
         else:
             await message.delete()
 
-            
     if message.guild.id not in ServerBlackList:
         
         if re.match(pattern, url) or message.attachments:
@@ -150,11 +133,5 @@ async def on_message(message):
                     random_word = random.choice(words)
                     await message.reply(random_word, mention_author=False)
                     previous_output = random_word
-                    
-@bot.event
-async def on_reaction_add(reaction, user):
-    if reaction.message.author == bot.user:  # リアクションがつけられたメッセージの送信者がボット自身なら
-        await reaction.message.delete()
-
 
 bot.run(TOKEN)
