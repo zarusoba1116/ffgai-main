@@ -28,20 +28,6 @@ async def on_message(message):
     url = message.content
     if message.author.bot:
         return
-
-import discord
-import json
-import time
-
-# 他の必要なモジュールや設定もここに追加してください
-
-# 以前のコードと同じ部分
-client = discord.Client()
-
-@client.event
-async def on_message(message):
-    if message.author.bot:
-        return
     elif message.channel.id in [1189922398049402890, 1183748739366662176]:
         if message.mentions:
             for user_mention in message.mentions:
