@@ -24,9 +24,13 @@ def load_data():
         return {"SleepCounts": {}, "ServerBlackList": []}
 
 def save_data(data):
-    with open("data.json", "w") as f:
-        json.dump(data, f, indent=4)
+    try:
+        with open("data.json", "w") as f:
+            json.dump(data, f, indent=4)
+            f.flush()  # バッファのフラッシュ
         print("saved")
+    except Exception as e:
+        print(f"Error saving data: {e}")
 
 @bot.listen("on_message")
 async def on_message(message):
