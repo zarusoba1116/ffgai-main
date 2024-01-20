@@ -143,7 +143,7 @@ async def on_message(message):
                     
 @bot.event
 async def on_reaction_add(reaction, user):
-    if user == bot.user:  # ボット自身のリアクションを確認
+    if reaction.message.author == bot.user:  # リアクションがつけられたメッセージの送信者がボット自身なら
         await reaction.message.delete()
 
 
