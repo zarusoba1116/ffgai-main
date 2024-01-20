@@ -38,7 +38,7 @@ async def on_message(message):
 
     if message.author.bot:
         return
-    elif message.channel.id in [1189922398049402890, 1183748739366662176]:
+    elif message.channel.id in [1189922398049402890, 1183748739366662176, 876362300632760342]:
         if message.mentions:
             for user_mention in message.mentions:
                 user_id = user_mention.id
