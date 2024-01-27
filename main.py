@@ -153,7 +153,7 @@ async def quiz(ctx):
     current_quiz = random.choice(quizzes)
 
     # クイズの説明文を送信
-    await ctx.send(f'クイズ: {current_quiz["question"]}')
+    await ctx.send(f'{current_quiz["question"]}')
 
     # ユーザーからのメッセージを待機
     def check(message):
@@ -163,8 +163,8 @@ async def quiz(ctx):
 
     # ユーザーの回答が正しいかどうかを判定
     if user_answer.content.lower() == current_quiz['answer'].lower():
-        await ctx.send('正解です！')
+        await ctx.send('やりますねぇ！')
     else:
-        await ctx.send('不正解です。正解は: ' + current_quiz['answer'])
+        await ctx.send('ふざけんな！(声だけ迫真)')
 
 bot.run(TOKEN)
