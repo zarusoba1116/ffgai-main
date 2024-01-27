@@ -163,8 +163,8 @@ async def quiz(ctx):
 
     # ユーザーの回答が正しいかどうかを判定
     if user_answer.content.lower() == current_quiz['answer'].lower():
-        await ctx.send('やりますねぇ！')
+        await ctx.reply('やりますねぇ！', mention_author=False)
     else:
-        await ctx.send('ふざけんな！(声だけ迫真)')
+        await ctx.reply('ふざけんな！(声だけ迫真)', mention_author=False)
 
 bot.run(TOKEN)
