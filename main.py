@@ -134,4 +134,50 @@ async def on_message(message):
                     await message.reply(random_word, mention_author=False)
                     previous_output = random_word
 
+# クイズデータをリストで管理
+quizzes = [
+    {"question": "日本の首都は？", "answer": "東京"},
+    {"question": "世界で一番高い山は？", "answer": "エベレスト"},
+    {"question": "水の化学式は？", "answer": "H2O"}
+]
+
+# 全体での回答回数
+global_quiz_attempts = {}
+
+@bot.command(name='quiz')
+async def quiz(ctx):
+    # ユーザーごとに回答回数を初期化
+    global_quiz_attempts[ctx.guild.id] = 0
+    
+    # ランダムにクイズを選択
+    current_quiz = random.choice(quizzes)
+    
+    # クイズの説明文を送信
+    await ctx.send(f'クイズ: {current_quiz["question"]}')
+
+    # ユーザーからのメッセージを待機
+    def check(message):
+        return message.author != bot.user and message.channel == ctx.channel
+
+    while global_quiz_attempts[ctx.guild.id] < 3:  # 最大3回まで回答可能
+        try:
+            user_answer = await bot.wait_for('message', check=check, timeout=10.0)
+        except TimeoutError:
+            await ctx.send('時間切れ！不正解です。正解は: ' + current_quiz['answer'])
+            return
+
+        # ユーザーの回答が正しいかどうかを判定
+        if user_answer.content.lower() == current_quiz['answer'].lower():
+            await ctx.send('正解です！')
+            break
+        else:
+            global_quiz_attempts[ctx.guild.id] += 1
+            if global_quiz_attempts[ctx.guild.id] < 3:
+                await ctx.send(f'不正解です。もう一度挑戦してください。回答回数: {global_quiz_attempts[ctx.guild.id]}')
+    
+    # 回答回数が3回に達した場合
+    await ctx.send(f'回答回数が3回に達しました。正解は: {current_quiz["answer"]}')
+    # 全体での回答回数をリセット
+    global_quiz_attempts[ctx.guild.id] = 0
+
 bot.run(TOKEN)
