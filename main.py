@@ -186,13 +186,9 @@ quizzes = [
     {"question": "またもや三角比に弄ばれたﾀｸが、ジョウバに突っ込まれた際に放った言葉。なぜ■■■■■■なのか、なぜ「■■■■」のかは理解不能である。\n「今日から11HRは15人になります(通告)」と同様の意味を持つと考えられる。", "answer": "ド・モルガンと寝させるぞ(脅迫)"}
 ]
 
-# 全体での回答回数
-global_quiz_attempts = {}
 
 @bot.command(name='quiz')
 async def quiz(ctx):
-    # ユーザーごとに回答回数を初期化
-    global_quiz_attempts[ctx.guild.id] = 0
 
     # ランダムにクイズを選択
     current_quiz = random.choice(quizzes)
@@ -202,14 +198,15 @@ async def quiz(ctx):
 
     # ユーザーからのメッセージを待機
     def check(message):
-        return message.author == ctx.author and message.channel == ctx.channel
+        return message.channel == ctx.channel  # チャンネルが同じであれば反応する
 
-    user_answer = await bot.wait_for('message', check=check)
+    user_answer = await bot.wait_for('message', check=check)  # タイムアウトを設定しておくと良い
 
     # ユーザーの回答が正しいかどうかを判定
     if user_answer.content.lower() == current_quiz['answer'].lower():
         await ctx.send('やりますねぇ！')
     else:
-        await ctx.send('ふざけんな！(声だけ迫真)')
+        await ctx.send(f'ふざけんな！(声だけ迫真)\n```{current_quiz["answer"]}```')
+
 
 bot.run(TOKEN)
