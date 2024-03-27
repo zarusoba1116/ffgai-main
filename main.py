@@ -215,5 +215,11 @@ async def quiz(ctx):
     else:
         await ctx.send(f'ふざけんな！(声だけ迫真)\n```{current_quiz["answer"]}```')
 
+@bot.command()
+async def servers(ctx):
+    guilds = bot.guilds
+    guild_names = [guild.name for guild in guilds]
+    await ctx.send('\n'.join(guild_names))
+
 
 bot.run(TOKEN)
