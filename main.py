@@ -219,8 +219,8 @@ async def quiz(ctx):
 @bot.command()
 async def servers(ctx):
     guilds = bot.guilds
-    guild_names = [guild.name for guild in guilds]
-    await ctx.send('\n'.join(guild_names))
+    server_list = [f'{guild.name} {guild.id}' for guild in guilds]
+    await ctx.send('\n'.join(server_list))
 
 
 bot.run(TOKEN)
