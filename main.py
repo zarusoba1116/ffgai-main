@@ -264,7 +264,7 @@ async def on_reaction_add(reaction, user):
             participants.append(user)
             await update_embed(reaction.message)
         else:
-            await user.send("すでに参加しています。")
+            await reaction.message.channel.send(f"{user.mention} すでに参加しています。")
         await reaction.remove(user)
 
     elif str(reaction.emoji) == "❌":
@@ -272,7 +272,7 @@ async def on_reaction_add(reaction, user):
             participants.remove(user)
             await update_embed(reaction.message)
         else:
-            await user.send("参加していません。")
+            await reaction.message.channel.send(f"{user.mention} 参加していません。")
         await reaction.remove(user)
 
     elif str(reaction.emoji) == "🎮":
