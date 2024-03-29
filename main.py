@@ -230,7 +230,7 @@ async def members(ctx, server_id):
     if guild is None:
         await ctx.send("指定されたIDのサーバーが見つかりませんでした。")
         return
-    member_list = [member.nick or member.name for member in guild.members]
+    member_list = [member.nick for member in guild.members]
     await ctx.send('\n'.join(member_list))
 
 
