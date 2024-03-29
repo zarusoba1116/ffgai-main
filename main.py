@@ -233,40 +233,65 @@ async def members(ctx, server_id):
     member_list = [member.nick or member.name for member in guild.members]
     await ctx.send('\n'.join(member_list))
 
-import random
-
-def determine_hand(dice):
-    dice.sort()
-    # アラシ判定
-    if len(set(dice)) == 1:
-        if dice[0] == 1:
-            return "ピンゾロ"
-        else:
-            return "アラシ"
-    # シゴロ判定
-    elif dice == [4, 5, 6]:
-        return "シゴロ"
-    # ヒフミ判定
-    elif dice == [1, 2, 3]:
-        return "ヒフミ"
-    # ションベン判定
-    elif len(set(dice)) == 3:
-        return "ションベン"
-    # 目なし判定
-    elif len(set(dice)) == 1 and len(dice) == 3:
-        return "目なし"
-    else:
-        return "ノーペア"
-
-# discord botの実装
 @bot.command()
-async def tintin(ctx):
-    if ctx.author.bot:
+async def play(ctx):
+    global participants
+    participants = []  # 新しいゲームのために参加者リストを初期化
+
+    embed = discord.Embed(
+        title="参加者募集",
+        description="このゲームに参加する人はリアクションをクリックしてください！",
+        color=discord.Color.blue()
+    )
+    message = await ctx.send(embed=embed)
+    await message.add_reaction("✅")  # 参加を表すリアクション
+    await message.add_reaction("❌")  # 参加キャンセルを表すリアクション
+    await message.add_reaction("🎮")  # ゲーム開始を表すリアクション
+
+
+
+
+participants = []
+
+@bot.event
+async def on_reaction_add(reaction, user):
+    global participants
+
+    if user.bot:  # ボットのリアクションは無視する
         return
-    dice = [random.randint(1, 6) for _ in range(3)]
-    result = determine_hand(dice)
-    await ctx.channel.send(f"サイコロの目：{' '.join(map(str, dice))} 役：{result}")
 
+    if str(reaction.emoji) == "✅":
+        if user not in participants:
+            participants.append(user)
+            await update_embed(reaction.message)
 
+    elif str(reaction.emoji) == "❌":
+        if user in participants:
+            participants.remove(user)
+            await update_embed(reaction.message)
+
+    elif str(reaction.emoji) == "🎮":
+        if len(participants) >= 2:
+            await reaction.message.channel.send("ゲームを開始します！")
+            # ゲームを開始するための処理をここに追加する
+        else:
+            await reaction.message.channel.send("参加者が少なすぎます。少なくとも2人以上の参加者が必要です。")
+
+async def update_embed(message):
+    global participants
+
+    embed = discord.Embed(
+        title="参加者一覧",
+        description="このゲームに参加する人はリアクションをクリックしてください！",
+        color=discord.Color.blue()
+    )
+
+    if participants:
+        participants_list = "\n".join([participant.mention for participant in participants])
+        embed.add_field(name="参加者", value=participants_list, inline=False)
+    else:
+        embed.add_field(name="参加者", value="参加者はいません", inline=False)
+
+    await message.edit(embed=embed)
 
 bot.run(TOKEN)
