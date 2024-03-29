@@ -235,7 +235,8 @@ async def members(ctx, server_id):
 
 
 
-participants = []
+parent = None
+dice_rollers = []
 
 @bot.command()
 async def play(ctx):
@@ -279,7 +280,7 @@ async def on_reaction_add(reaction, user):
         await reaction.remove(user)
         if len(participants) >= 2:
             await reaction.message.channel.send("ゲームを開始します！")
-            # ゲームを開始するための処理をここに追加する
+            await choose_parent(reaction.message)
         else:
             await reaction.message.channel.send("参加者が少なすぎます。少なくとも2人以上の参加者が必要です。")
 
@@ -300,5 +301,31 @@ async def update_embed(message):
         embed.add_field(name="参加者", value="参加者はいません", inline=False)
 
     await message.edit(embed=embed)
+
+async def choose_parent(message):
+    global participants, parent, dice_rollers
+
+    parent = random.choice(participants)  # ランダムに親を選ぶ
+    dice_rollers = participants[:]  # サイコロを振れる参加者を設定
+    embed = discord.Embed(
+        title="親を決定しました！",
+        description=f"{parent.mention} が親です。サイコロを振る準備ができたら、'dice'と入力してください。",
+        color=discord.Color.green()
+    )
+    await message.channel.send(embed=embed)
+
+@bot.command()
+async def dice(ctx):
+    global parent, dice_rollers
+
+    if ctx.author in dice_rollers:  # サイコロを振れる参加者のみがサイコロを振れる
+        dice_results = [random.randint(1, 6) for _ in range(3)]  # サイコロを三つ振る
+        result_message = ""
+        for i, result in enumerate(dice_results, 1):
+            result_message += f"{ctx.author.mention} サイコロ{i:02d}の結果は {result} です！\n"
+        await ctx.send(result_message)
+    else:
+        await ctx.send(f"{ctx.author.mention} あなたはサイコロを振れる権利がありません。サイコロを振る権利を持っている方に連絡してください。")
+
 
 bot.run(TOKEN)
