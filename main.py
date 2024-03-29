@@ -233,6 +233,10 @@ async def members(ctx, server_id):
     member_list = [member.nick or member.name for member in guild.members]
     await ctx.send('\n'.join(member_list))
 
+
+
+participants = []
+
 @bot.command()
 async def play(ctx):
     global participants
@@ -248,11 +252,6 @@ async def play(ctx):
     await message.add_reaction("❌")  # 参加キャンセルを表すリアクション
     await message.add_reaction("🎮")  # ゲーム開始を表すリアクション
 
-
-
-
-participants = []
-
 @bot.event
 async def on_reaction_add(reaction, user):
     global participants
@@ -264,13 +263,16 @@ async def on_reaction_add(reaction, user):
         if user not in participants:
             participants.append(user)
             await update_embed(reaction.message)
+            await reaction.remove(user)
 
     elif str(reaction.emoji) == "❌":
         if user in participants:
             participants.remove(user)
             await update_embed(reaction.message)
+            await reaction.remove(user)
 
     elif str(reaction.emoji) == "🎮":
+        await reaction.remove(user)
         if len(participants) >= 2:
             await reaction.message.channel.send("ゲームを開始します！")
             # ゲームを開始するための処理をここに追加する
