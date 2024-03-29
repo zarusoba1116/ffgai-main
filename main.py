@@ -314,7 +314,7 @@ async def choose_parent(message):
     )
     await message.channel.send(embed=embed)
 
-bot.command()
+@bot.command()
 async def dice(ctx):
     global parent, dice_rollers
     if ctx.author in dice_rollers:  # サイコロを振れる参加者のみがサイコロを振れる
