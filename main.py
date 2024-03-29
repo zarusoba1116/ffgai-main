@@ -233,23 +233,32 @@ async def members(ctx, server_id):
     member_list = [member.nick or member.name for member in guild.members]
     await ctx.send('\n'.join(member_list))
 
-# 役の定義
-def determine_hand(dice):
-    counts = [dice.count(i) for i in range(1, 7)]
+import random
 
-    if 3 in counts and 2 in counts:
-        return "チンチョン"
-    elif 4 in counts:
-        return "フォー・オブ・ア・カインド"
-    elif 3 in counts:
-        return "スリー・オブ・ア・カインド"
-    elif counts.count(2) == 2:
-        return "ツーペア"
-    elif 2 in counts:
-        return "ワンペア"
+def determine_hand(dice):
+    dice.sort()
+    # アラシ判定
+    if len(set(dice)) == 1:
+        if dice[0] == 1:
+            return "ピンゾロ"
+        else:
+            return "アラシ"
+    # シゴロ判定
+    elif dice == [4, 5, 6]:
+        return "シゴロ"
+    # ヒフミ判定
+    elif dice == [1, 2, 3]:
+        return "ヒフミ"
+    # ションベン判定
+    elif len(set(dice)) == 3:
+        return "ションベン"
+    # 目なし判定
+    elif len(set(dice)) == 1 and len(dice) == 3:
+        return "目なし"
     else:
         return "ノーペア"
 
+# discord botの実装
 @bot.command()
 async def tintin(ctx):
     if ctx.author.bot:
@@ -257,5 +266,7 @@ async def tintin(ctx):
     dice = [random.randint(1, 6) for _ in range(3)]
     result = determine_hand(dice)
     await ctx.channel.send(f"サイコロの目：{' '.join(map(str, dice))} 役：{result}")
+
+
 
 bot.run(TOKEN)
