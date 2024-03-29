@@ -243,8 +243,8 @@ async def play(ctx):
     participants = []  # 新しいゲームのために参加者リストを初期化
 
     embed = discord.Embed(
-        title="参加者募集",
-        description="このゲームに参加する人はリアクションをクリックしてください！",
+        title="チンチロリン",
+        description="参加する人はリアクションをクリックしてください",
         color=discord.Color.blue()
     )
     message = await ctx.send(embed=embed)
@@ -263,13 +263,17 @@ async def on_reaction_add(reaction, user):
         if user not in participants:
             participants.append(user)
             await update_embed(reaction.message)
-            await reaction.remove(user)
+        else:
+            await user.send("すでに参加しています。")
+        await reaction.remove(user)
 
     elif str(reaction.emoji) == "❌":
         if user in participants:
             participants.remove(user)
             await update_embed(reaction.message)
-            await reaction.remove(user)
+        else:
+            await user.send("参加していません。")
+        await reaction.remove(user)
 
     elif str(reaction.emoji) == "🎮":
         await reaction.remove(user)
@@ -279,12 +283,13 @@ async def on_reaction_add(reaction, user):
         else:
             await reaction.message.channel.send("参加者が少なすぎます。少なくとも2人以上の参加者が必要です。")
 
+
 async def update_embed(message):
     global participants
 
     embed = discord.Embed(
-        title="参加者一覧",
-        description="このゲームに参加する人はリアクションをクリックしてください！",
+        title="チンチロリン",
+        description="参加する人はリアクションをクリックしてください",
         color=discord.Color.blue()
     )
 
