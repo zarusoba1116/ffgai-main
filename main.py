@@ -309,26 +309,28 @@ async def choose_parent(message):
     dice_rollers = participants[:]  # サイコロを振れる参加者を設定
     embed = discord.Embed(
         title="親を決定しました！",
-        description=f"{parent.mention} が親です。サイコロを振る準備ができたら、'dice'と入力してください。",
+        description=f"{parent.mention} が親です。サイコロを振る準備ができたら、'$dice'と入力してください。",
         color=discord.Color.green()
     )
     await message.channel.send(embed=embed)
 
-@bot.command()
+bot.command()
 async def dice(ctx):
-    dice_emojis = {
-        1: '<:dice01:1223162474908614777>',
-        2: '<:dice02:1223162476837998644> ',
-        3: '<:dice03:1223162478876299364> ',
-        4: '<:dice04:1223162480721924096> ',
-        5: '<:dice05:1223162483355942952> ',
-        6: '<:dice06:1223162485511684136>'
-    }
+    global parent, dice_rollers
+    if ctx.author in dice_rollers:  # サイコロを振れる参加者のみがサイコロを振れる
+        dice_emojis = {
+            1: '<:dice01:1223162474908614777>',
+            2: '<:dice02:1223162476837998644>',
+            3: '<:dice03:1223162478876299364>',
+            4: '<:dice04:1223162480721924096>',
+            5: '<:dice05:1223162483355942952>',
+            6: '<:dice06:1223162485511684136>'
+        }
+        rolls = [random.randint(1, 6) for _ in range(3)]  # 3つのサイコロを振る
+        rolls_str = ' '.join(dice_emojis[roll] for roll in rolls)  # 出目に応じた絵文字に変換
+        await ctx.send(f"サイコロの出目は: {rolls_str}")
+    else:
+        await ctx.send(f"{ctx.author.mention} あなたはサイコロを振れる権利がありません。")
 
-    rolls = [random.randint(1, 6) for _ in range(3)]  # 3つのサイコロを振る
-
-    rolls_str = ' '.join(dice_emojis[roll] for roll in rolls)  # 出目に応じた絵文字に変換
-
-    await ctx.send(f"サイコロの出目は: {rolls_str}")
 
 bot.run(TOKEN)
