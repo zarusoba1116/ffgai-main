@@ -230,9 +230,32 @@ async def members(ctx, server_id):
     if guild is None:
         await ctx.send("指定されたIDのサーバーが見つかりませんでした。")
         return
-    member_list = [member.nick for member in guild.members]
+    member_list = [member.nick or member.name for member in guild.members]
     await ctx.send('\n'.join(member_list))
 
+# 役の定義
+def determine_hand(dice):
+    counts = [dice.count(i) for i in range(1, 7)]
 
+    if 3 in counts and 2 in counts:
+        return "チンチョン"
+    elif 4 in counts:
+        return "フォー・オブ・ア・カインド"
+    elif 3 in counts:
+        return "スリー・オブ・ア・カインド"
+    elif counts.count(2) == 2:
+        return "ツーペア"
+    elif 2 in counts:
+        return "ワンペア"
+    else:
+        return "ノーペア"
+
+@bot.command()
+async def tintin(ctx):
+    if ctx.author.bot:
+        return
+    dice = [random.randint(1, 6) for _ in range(3)]
+    result = determine_hand(dice)
+    await ctx.channel.send(f"サイコロの目：{' '.join(map(str, dice))} 役：{result}")
 
 bot.run(TOKEN)
