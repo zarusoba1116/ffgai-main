@@ -316,16 +316,19 @@ async def choose_parent(message):
 
 @bot.command()
 async def dice(ctx):
-    global parent, dice_rollers
+    dice_emojis = {
+        1: '<:dice01:1223162474908614777>',
+        2: '<:dice02:1223162476837998644> ',
+        3: '<:dice03:1223162478876299364> ',
+        4: '<:dice04:1223162480721924096> ',
+        5: '<:dice05:1223162483355942952> ',
+        6: '<:dice06:1223162485511684136>'
+    }
 
-    if ctx.author in dice_rollers:  # サイコロを振れる参加者のみがサイコロを振れる
-        dice_results = [random.randint(1, 6) for _ in range(3)]  # サイコロを三つ振る
-        result_message = ""
-        for i, result in enumerate(dice_results, 1):
-            result_message += f"{ctx.author.mention} サイコロ{i:02d}の結果は {result} です！\n"
-        await ctx.send(result_message)
-    else:
-        await ctx.send(f"{ctx.author.mention} あなたはサイコロを振れる権利がありません。サイコロを振る権利を持っている方に連絡してください。")
+    rolls = [random.randint(1, 6) for _ in range(3)]  # 3つのサイコロを振る
 
+    rolls_str = ' '.join(dice_emojis[roll] for roll in rolls)  # 出目に応じた絵文字に変換
+
+    await ctx.send(f"サイコロの出目は: {rolls_str}")
 
 bot.run(TOKEN)
