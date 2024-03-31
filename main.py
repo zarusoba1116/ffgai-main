@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 import random
 import discord
@@ -26,6 +27,8 @@ async def on_message(message):
     guild = bot.get_guild(message.guild.id)
     pattern = "https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
     url = message.content
+    global game_started
+
     if message.author.bot:
         return
 
@@ -196,7 +199,6 @@ quizzes = [
     {"question": "山地の受け取り方によっては侮辱と聞こえるような発言に対して、「■■■？(■■)」を数回浴びせたのち、放たれた。「■■■？(■■)」の使用方法の一種であると考えられる。相変わらず、どの辺りが「■■」なのかは意味不明である。"}
 ]
 
-
 @bot.command(name='quiz')
 async def quiz(ctx):
 
@@ -233,104 +235,36 @@ async def members(ctx, server_id):
     member_list = [member.nick or member.name for member in guild.members]
     await ctx.send('\n'.join(member_list))
 
-
-
-parent = None
-dice_rollers = []
-
-@bot.command()
-async def play(ctx):
-    global participants
-    participants = []  # 新しいゲームのために参加者リストを初期化
-
-    embed = discord.Embed(
-        title="チンチロリン",
-        description="参加する人はリアクションをクリックしてください",
-        color=discord.Color.blue()
-    )
-    message = await ctx.send(embed=embed)
-    await message.add_reaction("✅")  # 参加を表すリアクション
-    await message.add_reaction("❌")  # 参加キャンセルを表すリアクション
-    await message.add_reaction("🎮")  # ゲーム開始を表すリアクション
-
-@bot.event
-async def on_reaction_add(reaction, user):
-    global participants
-
-    if user.bot:  # ボットのリアクションは無視する
-        return
-
-    if str(reaction.emoji) == "✅":
-        if user not in participants:
-            participants.append(user)
-            await update_embed(reaction.message)
-        else:
-            await reaction.message.channel.send(f"{user.mention} すでに参加しています。")
-        await reaction.remove(user)
-
-    elif str(reaction.emoji) == "❌":
-        if user in participants:
-            participants.remove(user)
-            await update_embed(reaction.message)
-        else:
-            await reaction.message.channel.send(f"{user.mention} 参加していません。")
-        await reaction.remove(user)
-
-    elif str(reaction.emoji) == "🎮":
-        await reaction.remove(user)
-        if len(participants) >= 2:
-            await reaction.message.channel.send("ゲームを開始します！")
-            await choose_parent(reaction.message)
-        else:
-            await reaction.message.channel.send("参加者が少なすぎます。少なくとも2人以上の参加者が必要です。")
-
-
-async def update_embed(message):
-    global participants
-
-    embed = discord.Embed(
-        title="チンチロリン",
-        description="参加する人はリアクションをクリックしてください",
-        color=discord.Color.blue()
-    )
-
-    if participants:
-        participants_list = "\n".join([participant.mention for participant in participants])
-        embed.add_field(name="参加者", value=participants_list, inline=False)
-    else:
-        embed.add_field(name="参加者", value="参加者はいません", inline=False)
-
-    await message.edit(embed=embed)
-
-async def choose_parent(message):
-    global participants, parent, dice_rollers
-
-    parent = random.choice(participants)  # ランダムに親を選ぶ
-    dice_rollers = participants[:]  # サイコロを振れる参加者を設定
-    embed = discord.Embed(
-        title="親を決定しました！",
-        description=f"{parent.mention} が親です。サイコロを振る準備ができたら、'$dice'と入力してください。",
-        color=discord.Color.green()
-    )
-    await message.channel.send(embed=embed)
-
 @bot.command()
 async def dice(ctx):
-    global parent, dice_rollers
-    if ctx.author in dice_rollers:  # サイコロを振れる参加者のみがサイコロを振れる
-        dice_emojis = {
-            1: '<:dice01:1223162474908614777>',
-            2: '<:dice02:1223162476837998644>',
-            3: '<:dice03:1223162478876299364>',
-            4: '<:dice04:1223162480721924096>',
-            5: '<:dice05:1223162483355942952>',
-            6: '<:dice06:1223162485511684136>'
-        }
-        rolls = [random.randint(1, 6) for _ in range(3)]  # 3つのサイコロを振る
-        rolls_str = ' '.join(dice_emojis[roll] for roll in rolls)  # 出目に応じた絵文字に変換
-        await ctx.send(f"サイコロの出目は: {rolls_str}")
-    else:
-        await ctx.send(f"{ctx.author.mention} あなたはサイコロを振れる権利がありません。")
+    global participants
 
+    dice_emojis = {1: '<:dice01:1223162474908614777>', 2: '<:dice02:1223162476837998644>', 3: '<:dice03:1223162478876299364>', 4: '<:dice04:1223162480721924096>', 5: '<:dice05:1223162483355942952>', 6: '<:dice06:1223162485511684136>'}
+    rolls = [random.randint(1, 6) for _ in range(3)]
+    rolls_str = ' '.join(dice_emojis[roll] for roll in rolls)
+
+    embed = discord.Embed(title="サイコロの結果", color=discord.Color.green())
+    embed.add_field(name="出目", value=rolls_str, inline=False)
+
+    result = await evaluate_roll(ctx, rolls)
+    embed.add_field(name="役", value=result, inline=False)
+
+    await ctx.send(embed=embed)
+
+async def evaluate_roll(ctx, rolls):
+    if len(set(rolls)) == 1:
+        if rolls[0] == 1:
+            return "ピンゾロ"
+        else:
+            return "アラシ"
+    elif rolls.count(rolls[0]) == 2 or rolls.count(rolls[1]) == 2 or rolls.count(rolls[2]) == 2:
+        remaining_dice = [roll for roll in rolls if rolls.count(roll) == 1][0]
+        return f"{remaining_dice}の目"
+    elif sorted(rolls) == [4, 5, 6]:
+        return "シゴロ"
+    elif sorted(rolls) == [1, 2, 3]:
+        return "ヒフミ"
+    else:
+        return "役無し"
 
 bot.run(TOKEN)
