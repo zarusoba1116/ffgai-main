@@ -115,7 +115,7 @@ async def on_message(message):
                             await message.channel.send(sentence_4)
 
         else:
-            if random.randint(1,100) < 20:
+            if random.randint(1,100) < 30:
                 global previous_output
                 if "$" in message.content:
                     return
