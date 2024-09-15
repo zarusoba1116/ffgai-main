@@ -8,11 +8,13 @@ import time
 import json
 from Word_list import words
 from os import getenv
+from keep_alive import keep_alive
 
 TOKEN = getenv('DISCORD_BOT_TOKEN')
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
 intents = discord.Intents.all()
 intents.typing = False
+keep_alive()
 
 bot = commands.Bot(command_prefix='$',help_command=None,case_insensitive=True,intents=intents)
 
