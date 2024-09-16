@@ -144,41 +144,8 @@ def load_quizzes():
     with open('quizzes.json', 'r', encoding='utf-8') as f:
         return json.load(f)
 
-# quizzes.json にクイズデータを書き込む関数
-def save_quiz(question, answer):
-    quizzes = load_quizzes()  # 既存のクイズを読み込み
-    quizzes.append({"question": question, "answer": answer})  # 新しいクイズを追加
-
-    with open('quizzes.json', 'w', encoding='utf-8') as f:
-        json.dump(quizzes, f, ensure_ascii=False, indent=4)  # データを保存
-
 # quizzes.json からクイズをロード
 quizzes = load_quizzes()
-
-@bot.command(name='add_quiz')
-async def add_quiz(ctx):
-    # 質問文を入力するよう促すメッセージ
-    await ctx.send("追加したい質問文を入力してください。")
-
-    # 質問文の入力を待機
-    def check(message):
-        return message.author == ctx.author and message.channel == ctx.channel  # チャンネルとユーザーが同じ場合のみ反応
-
-    question_msg = await bot.wait_for('message', check=check)  # 質問文を取得
-    question = question_msg.content  # 入力された質問文
-
-    # 回答文を入力するよう促すメッセージ
-    await ctx.send("その質問の答えを入力してください。")
-    
-    # 回答文の入力を待機
-    answer_msg = await bot.wait_for('message', check=check)  # 回答文を取得
-    answer = answer_msg.content  # 入力された答え
-
-    # クイズを quizzes.json に追加
-    save_quiz(question, answer)
-    
-    # 成功メッセージを送信
-    await ctx.send(f"クイズが追加されました！\n**質問:** {question}\n**答え:** {answer}")
 
 @bot.command(name='quiz')
 async def quiz(ctx):
