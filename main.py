@@ -34,6 +34,11 @@ async def on_message(message):
     if message.author.bot:
         return
     
+    if message.channel.id == "1250315031405527050":
+        guild = bot.get_guild(852145141909159947)
+        channel = guild.get_channel(852145141909159950)
+        await channel.send(message.content)
+    
     if not re.match(pattern, url):
         if 'AI' in message.content or 'えーあい' in message.content or 'ＡＩ' in message.content:
             await message.delete()
