@@ -9,6 +9,7 @@ import json
 from Word_list import words
 from os import getenv
 from keep_alive import keep_alive
+import homo
 
 TOKEN = getenv('DISCORD_BOT_TOKEN')
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
@@ -33,6 +34,10 @@ async def on_message(message):
 
     if message.author.bot:
         return
+    
+    if re.match(r"^-?\d+(\.\d+)?$", message.content):
+        output = homo(message.content)
+        await message.reply(output, mention_author=False)
     
     if message.channel.id == 1250315031405527050:
         guild = bot.get_guild(852145141909159947)
