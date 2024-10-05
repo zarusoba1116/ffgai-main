@@ -188,6 +188,7 @@ async def on_message(message):
             if random.randint(1,100) < 30:
                 global previous_output
                 input_str = message.content
+                print(f"Received input_str: '{input_str}' with length: {len(input_str)}")
                 if "$" in message.content:
                     return
                 if len(input_str) <= 1:
