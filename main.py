@@ -22,8 +22,6 @@ bot = commands.Bot(command_prefix='$',help_command=None,case_insensitive=True,in
 
 previous_output = None
 
-message_cache = {}
-
 @bot.listen("on_message")
 async def on_message(message):
     with open('data.json', 'r') as json_open:
@@ -36,39 +34,6 @@ async def on_message(message):
 
     if message.author.bot:
         return
-    
-    # メッセージ内容と送信者IDを取得
-    content = message.content
-    user_id = message.author.id
-
-    # 現在の時刻
-    current_time = message.created_at
-
-    if (user_id, content) in message_cache:
-        last_time, count = message_cache[(user_id, content)]
-        
-        # 一定時間内に同じメッセージが送られた場合
-        if (current_time - last_time).total_seconds() < 5:  # 5秒以内
-            count += 1
-            message_cache[(user_id, content)] = (current_time, count)
-
-            # 4回以上の連投を検知した場合
-            if count >= 5:
-                try:
-                    await message.author.send("https://lohas.nicoseiga.jp/thumb/1716952i?")
-                except discord.Forbidden:
-                    print("DMを送れませんでした。送信者がDMを受け取る設定になっていないか、ブロックされています。")
-                # 警告後にカウントをリセット
-                message_cache.pop((user_id, content), None)  # キャッシュをクリア
-        else:
-            # タイムスタンプが古い場合はリセット
-            message_cache[(user_id, content)] = (current_time, 1)
-    else:
-        # 新しいメッセージの場合はキャッシュに追加
-        message_cache[(user_id, content)] = (current_time, 1)
-
-    # メッセージを処理するために次のイベントに渡す
-    await bot.process_commands(message)
     
     if re.match(r"^-?\d+(\.\d+)?$", message.content):
         # 入力を浮動小数点数に変換
