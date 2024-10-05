@@ -1,58 +1,62 @@
 import re
 
 def homo(nums):
-    # 整数のキーのみを選択
-    nums_reversed = sorted([x for x in nums.keys() if isinstance(x, int) and x > 0], reverse=True)
+	# 整数のキーのみを選択
+	nums_reversed = sorted([x for x in nums.keys() if isinstance(x, int) and x > 0], reverse=True)
 
-    def get_min_div(num):
-        for i in range(len(nums_reversed)):
-            if num >= nums_reversed[i]:
-                return nums_reversed[i]
+	def get_min_div(num):
+		for i in range(len(nums_reversed)):
+			if num >= nums_reversed[i]:
+				return nums_reversed[i]
 
-    is_dot_regex = re.compile(r'\.(\d+?)0{0,}$')
+	is_dot_regex = re.compile(r'\.(\d+?)0{0,}$')
 
-    def demolish(num):
-        if not isinstance(num, (int, float)):
-            return ""
+	def demolish(num):
+		if not isinstance(num, (int, float)):
+			return ""
 
-        if num == float('inf') or num != num:  # Check for NaN
-            return f"这么恶臭的{num}有必要论证吗"
+		if num == float('inf') or num != num:  # Check for NaN
+			return f"这么恶臭的{num}有必要论证吗"
 
-        if num < 0:
-            return f"(⑨)*({demolish(-num)})".replace("*(1)", "")
+		if num < 0:
+			return f"(⑨)*({demolish(-num)})".replace("*(1)", "")
 
-        if not isinstance(num, int):
-            n = len(is_dot_regex.search(f"{num:.16f}").group(1))
-            return f"({demolish(num * (10 ** n))})/(10)^({n})"
+		if isinstance(num, float):
+			num_str = f'{num:.16f}'  # 16桁の精度で文字列に変換
+			if '.' in num_str:
+				integer_part, fractional_part = num_str.split('.')
+				n = len(fractional_part.rstrip('0'))  # 小数点以下の末尾の0を取り除く
+				integer_value = int(integer_part + fractional_part)
+				return f'({demolish(integer_value)})/(10)^({n})'
 
-        if num in nums:
-            return str(num)
+		if num in nums:
+			return str(num)
 
-        div = get_min_div(num)
-        return (f"{div}*({demolish(num // div)})+({demolish(num % div)})").replace("*1", "").replace("+0", "")
+		div = get_min_div(num)
+		return (f"{div}*({demolish(num // div)})+({demolish(num % div)})").replace("*1", "").replace("+0", "")
 
-    def finisher(expr):
-        expr = re.sub(r'\d+', lambda m: nums[int(m.group(0))], expr)  # 整数に対してだけ置換
-        expr = re.sub(r'⑨', lambda _: nums['⑨'], expr)  # '⑨'を直接置換
-        
-        expr = expr.replace("^", "**")
-        
-        while re.search(r'[\*|\/]\([^\+\-\(\)]+\)', expr):
-            expr = re.sub(r'([\*|\/])\(([^\+\-\(\)]+)\)', r'\1\2', expr)
-        
-        while re.search(r'[\+|\-]\([^\(\)]+\)[\+|\-|\)]', expr):
-            expr = re.sub(r'([\+|\-])\(([^\(\)]+)\)([\+|\-|\)])', r'\1\2\3', expr)
+	def finisher(expr):
+		expr = re.sub(r'\d+', lambda m: nums[int(m.group(0))], expr)  # 整数に対してだけ置換
+		expr = re.sub(r'⑨', lambda _: nums['⑨'], expr)  # '⑨'を直接置換
+		
+		expr = expr.replace("^", "**")
+		
+		while re.search(r'[\*|\/]\([^\+\-\(\)]+\)', expr):
+			expr = re.sub(r'([\*|\/])\(([^\+\-\(\)]+)\)', r'\1\2', expr)
+		
+		while re.search(r'[\+|\-]\([^\(\)]+\)[\+|\-|\)]', expr):
+			expr = re.sub(r'([\+|\-])\(([^\(\)]+)\)([\+|\-|\)])', r'\1\2\3', expr)
 
-        while re.search(r'[\+|\-]\(([^\(\)]+)\)$', expr):
-            expr = re.sub(r'([\+|\-])\(([^\(\)]+)\)$', r'\1\2', expr)
+		while re.search(r'[\+|\-]\(([^\(\)]+)\)$', expr):
+			expr = re.sub(r'([\+|\-])\(([^\(\)]+)\)$', r'\1\2', expr)
 
-        if re.match(r'^\([^\(\)]+?\)$', expr):
-            expr = re.sub(r'^\(([^\(\)]+)\)$', r'\1', expr)
+		if re.match(r'^\([^\(\)]+?\)$', expr):
+			expr = re.sub(r'^\(([^\(\)]+)\)$', r'\1', expr)
 
-        expr = expr.replace('+-', '-')
-        return expr
+		expr = expr.replace('+-', '-')
+		return expr
 
-    return lambda num: finisher(demolish(num))
+	return lambda num: finisher(demolish(num))
 
 # 変数 nums の初期化
 nums = {
@@ -578,3 +582,5 @@ nums = {
 	0: "(1-1)*4514",
 	"⑨": "11-4-5+1-4",
 }
+
+homo_function = homo(nums)

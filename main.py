@@ -36,7 +36,8 @@ async def on_message(message):
         return
     
     if re.match(r"^-?\d+(\.\d+)?$", message.content):
-        output = homo.homo(message.content)
+        input = message.content
+        output = homo.homo(input)
         await message.reply(output, mention_author=False)
     
     if message.channel.id == 1250315031405527050:
