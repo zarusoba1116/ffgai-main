@@ -59,7 +59,7 @@ async def on_message(message):
         await channel.send(message.content)
     
     if not re.match(pattern, url):
-        if 'AI' in message.content or 'えーあい' in message.content or 'ＡＩ' in message.content:
+        if 'AI' in message.content or 'えーあい' in message.content or 'ＡＩ' in message.content or 'ai' in message.content or 'ÄI' in message.content:
             await message.delete()
 
     elif message.channel.id in [1189922398049402890, 1183748739366662176, 876362300632760342]:
