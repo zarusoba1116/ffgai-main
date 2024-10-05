@@ -36,9 +36,22 @@ async def on_message(message):
         return
     
     if re.match(r"^-?\d+(\.\d+)?$", message.content):
-        input = message.content
-        output = homo.homo(input)
-        await message.reply(output, mention_author=False)
+        # 入力を浮動小数点数に変換
+        input_value = float(message.content)
+
+        # 整数の場合は整数として返す関数
+        def format_number(num):
+            if num.is_integer():
+                return int(num)  # 整数として返す
+            else:
+                return num  # 浮動小数点数のまま返す
+        # フォーマット済みの値を取得
+        formatted_input = format_number(input_value)
+
+        # homo_functionを呼び出す
+        output = homo.homo_function(formatted_input)
+        replaced_output = output.replace("*", r"\*")
+        await message.reply(replaced_output, mention_author=False)
     
     if message.channel.id == 1250315031405527050:
         guild = bot.get_guild(852145141909159947)
