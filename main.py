@@ -136,11 +136,11 @@ async def on_message(message):
 
     # 正規表現を使用して検知
     if re.search(pattern, message_content):
-        await message.delete()
         try:
             await message.author.send("https://lohas.nicoseiga.jp/thumb/1716952i?")
         except discord.Forbidden:
             print("DMを送れませんでした。送信者がDMを受け取る設定になっていないか、ブロックされています。")
+        await message.delete()
 
     elif message.channel.id in [1189922398049402890, 1183748739366662176, 876362300632760342]:
         if message.mentions:
