@@ -1,7 +1,6 @@
 import re
 
 def homo(nums):
-	# 整数のキーのみを選択
 	nums_reversed = sorted([x for x in nums.keys() if isinstance(x, int) and x > 0], reverse=True)
 
 	def get_min_div(num):
@@ -15,17 +14,17 @@ def homo(nums):
 		if not isinstance(num, (int, float)):
 			return ""
 
-		if num == float('inf') or num != num:  # Check for NaN
-			return f"这么恶臭的{num}有必要论证吗"
+		if num == float('inf') or num != num:
+			return f"なんで見る必要なんかあるんですか（正論）"
 
 		if num < 0:
 			return f"(⑨)*({demolish(-num)})".replace("*(1)", "")
 
 		if isinstance(num, float):
-			num_str = f'{num:.16f}'  # 16桁の精度で文字列に変換
+			num_str = f'{num:.16f}'
 			if '.' in num_str:
 				integer_part, fractional_part = num_str.split('.')
-				n = len(fractional_part.rstrip('0'))  # 小数点以下の末尾の0を取り除く
+				n = len(fractional_part.rstrip('0'))
 				integer_value = int(integer_part + fractional_part)
 				return f'({demolish(integer_value)})/(10)^({n})'
 
@@ -36,8 +35,8 @@ def homo(nums):
 		return (f"{div}*({demolish(num // div)})+({demolish(num % div)})").replace("*1", "").replace("+0", "")
 
 	def finisher(expr):
-		expr = re.sub(r'\d+', lambda m: nums[int(m.group(0))], expr)  # 整数に対してだけ置換
-		expr = re.sub(r'⑨', lambda _: nums['⑨'], expr)  # '⑨'を直接置換
+		expr = re.sub(r'\d+', lambda m: nums[int(m.group(0))], expr)
+		expr = re.sub(r'⑨', lambda _: nums['⑨'], expr)
 		
 		expr = expr.replace("^", "**")
 		
