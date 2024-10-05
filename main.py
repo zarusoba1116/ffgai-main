@@ -61,6 +61,10 @@ async def on_message(message):
     if not re.match(pattern, url):
         if 'AI' in message.content or 'えーあい' in message.content or 'ＡＩ' in message.content or 'ai' in message.content or 'ÄI' in message.content:
             await message.delete()
+            try:
+                await message.author.send("https://lohas.nicoseiga.jp/thumb/1716952i?")
+            except discord.Forbidden:
+                print("DMを送れませんでした。送信者がDMを受け取る設定になっていないか、ブロックされています。")
 
     elif message.channel.id in [1189922398049402890, 1183748739366662176, 876362300632760342]:
         if message.mentions:
