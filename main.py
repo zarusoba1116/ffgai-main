@@ -53,7 +53,7 @@ async def on_message(message):
             message_cache[(user_id, content)] = (current_time, count)
 
             # 3回以上の連投を検知した場合
-            if count >= 5:
+            if count >= 3:
                 try:
                     await message.author.send("https://lohas.nicoseiga.jp/thumb/1716952i?")
                 except discord.Forbidden:
@@ -93,14 +93,54 @@ async def on_message(message):
         guild = bot.get_guild(852145141909159947)
         channel = guild.get_channel(852145141909159950)
         await channel.send(message.content)
-    
-    if not re.match(pattern, url):
-        if 'AI' in message.content or 'えーあい' in message.content or 'ＡＩ' in message.content or 'ai' in message.content or 'ÄI' in message.content:
-            await message.delete()
-            try:
-                await message.author.send("https://lohas.nicoseiga.jp/thumb/1716952i?")
-            except discord.Forbidden:
-                print("DMを送れませんでした。送信者がDMを受け取る設定になっていないか、ブロックされています。")
+
+    # 検知したいメッセージ
+    message_content = message.content
+
+    # AIに関するパターンをリストアップ
+    ai_patterns = [
+        r'\b[Aa][Ii]\b',                        # 単語境界を使って大小文字のAIを検知
+        r'えーあい',                            # ひらがな
+        r'エーアイ',                            # カタカナ
+        r'ＡＩ',                               # 全角
+        r'ａｉ',                                # 全角小文字
+        r'[aàáâäǎæãåāAÀÁÂÄǍÆÃÅĀ][iìíîïǐĩīıįIÌÍÎÏǏĨĪİĮ]',    # アクセント付きのAI
+        r'아이',                                # ハングル
+        r'에이',                                # ハングル
+        r'人工智能',                             # 中国語
+        r'艾',                                  # 中国語音に近い表記
+        r'Искусственный интеллект',            # ロシア語
+        r'АИ',                                  # ロシア語音に近い表記
+        r'الذكاء الاصطناعي',                    # アラビア語
+        r'أي',                                  # アラビア語音に近い表記
+        r'आर्टिफिशियल इंटेलिजेंस',            # ヒンディー語
+        r'एआई',                                 # ヒンディー語音に近い表記
+        r'Intelligence artificielle',           # フランス語
+        r'Künstliche Intelligenz',              # ドイツ語
+        r'Intelligenza artificiale',            # イタリア語
+        r'Inteligência artificial',             # ポルトガル語
+        r'ปัญญาประดิษฐ์',                      # タイ語
+        r'เอไอ',                                # タイ語音に近い表記
+        r'A!I',                                 # 感嘆符を含む
+        r'A1',                                  # 数字の「1」
+        r'A I',                                  # 半角スペースを含む
+        r'Ａ Ｉ',                               # 全角スペースを含む
+        r'[𝑨𝗔𝔸][𝑰𝗜𝕀]',                      # Unicodeや異体字
+        r'Ai!?|Ai1|A!!',                        # 誤植のバリエーションや感嘆符
+        r'A[ \t]*I[!]*',                        # スペースや感嘆符のバリエーション
+        r'🤖',                                  # ロボット絵文字
+    ]
+
+    # パターンを正規表現に変換
+    pattern = '|'.join(ai_patterns)
+
+    # 正規表現を使用して検知
+    if re.search(pattern, message_content):
+        await message.delete()
+        try:
+            await message.author.send("https://lohas.nicoseiga.jp/thumb/1716952i?")
+        except discord.Forbidden:
+            print("DMを送れませんでした。送信者がDMを受け取る設定になっていないか、ブロックされています。")
 
     elif message.channel.id in [1189922398049402890, 1183748739366662176, 876362300632760342]:
         if message.mentions:
