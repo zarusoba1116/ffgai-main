@@ -46,16 +46,20 @@ async def on_message(message):
 
     if (user_id, content) in message_cache:
         last_time, count = message_cache[(user_id, content)]
+        
         # 一定時間内に同じメッセージが送られた場合
         if (current_time - last_time).total_seconds() < 5:  # 5秒以内
             count += 1
             message_cache[(user_id, content)] = (current_time, count)
+
             # 3回以上の連投を検知した場合
             if count >= 3:
                 try:
                     await message.author.send("https://lohas.nicoseiga.jp/thumb/1716952i?")
                 except discord.Forbidden:
                     print("DMを送れませんでした。送信者がDMを受け取る設定になっていないか、ブロックされています。")
+                # 警告後にカウントをリセット
+                message_cache.pop((user_id, content), None)  # キャッシュをクリア
         else:
             # タイムスタンプが古い場合はリセット
             message_cache[(user_id, content)] = (current_time, 1)
