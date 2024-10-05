@@ -52,8 +52,8 @@ async def on_message(message):
             count += 1
             message_cache[(user_id, content)] = (current_time, count)
 
-            # 3回以上の連投を検知した場合
-            if count >= 3:
+            # 4回以上の連投を検知した場合
+            if count >= 5:
                 try:
                     await message.author.send("https://lohas.nicoseiga.jp/thumb/1716952i?")
                 except discord.Forbidden:
