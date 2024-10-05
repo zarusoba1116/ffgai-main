@@ -11,15 +11,18 @@ from os import getenv
 from keep_alive import keep_alive
 import homo
 
+keep_alive()
+
 TOKEN = getenv('DISCORD_BOT_TOKEN')
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
 intents = discord.Intents.all()
 intents.typing = False
-keep_alive()
 
 bot = commands.Bot(command_prefix='$',help_command=None,case_insensitive=True,intents=intents)
 
 previous_output = None
+
+message_cache = {}
 
 @bot.listen("on_message")
 async def on_message(message):
@@ -27,13 +30,41 @@ async def on_message(message):
         json_data = json.load(json_open)
         ServerBlackList = json_data["ServerBlackList"]
 
-    guild = bot.get_guild(message.guild.id)
     pattern = "https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
     url = message.content
     global game_started
 
     if message.author.bot:
         return
+    
+    # メッセージ内容と送信者IDを取得
+    content = message.content
+    user_id = message.author.id
+
+    # 現在の時刻
+    current_time = message.created_at
+
+    if (user_id, content) in message_cache:
+        last_time, count = message_cache[(user_id, content)]
+        # 一定時間内に同じメッセージが送られた場合
+        if (current_time - last_time).total_seconds() < 5:  # 5秒以内
+            count += 1
+            message_cache[(user_id, content)] = (current_time, count)
+            # 3回以上の連投を検知した場合
+            if count >= 3:
+                try:
+                    await message.author.send("https://lohas.nicoseiga.jp/thumb/1716952i?")
+                except discord.Forbidden:
+                    print("DMを送れませんでした。送信者がDMを受け取る設定になっていないか、ブロックされています。")
+        else:
+            # タイムスタンプが古い場合はリセット
+            message_cache[(user_id, content)] = (current_time, 1)
+    else:
+        # 新しいメッセージの場合はキャッシュに追加
+        message_cache[(user_id, content)] = (current_time, 1)
+
+    # メッセージを処理するために次のイベントに渡す
+    await bot.process_commands(message)
     
     if re.match(r"^-?\d+(\.\d+)?$", message.content):
         # 入力を浮動小数点数に変換
@@ -52,6 +83,7 @@ async def on_message(message):
         output = homo.homo_function(formatted_input)
         replaced_output = output.replace("*", r"\*")
         await message.reply(replaced_output, mention_author=False)
+            
     
     if message.channel.id == 1250315031405527050:
         guild = bot.get_guild(852145141909159947)
@@ -151,9 +183,11 @@ async def on_message(message):
         else:
             if random.randint(1,100) < 30:
                 global previous_output
+                input_str = message.content
                 if "$" in message.content:
                     return
-                input_str = message.content
+                if len(input_str) <= 1:
+                    return
                 kanji_list = kanji_regex.findall(input_str)
                 kanji_str = ''.join(kanji_list)
                 found_words = [word for word in words if any(char in kanji_str for char in word)]
