@@ -7,13 +7,18 @@ import asyncio
 import time
 import json
 from Word_list import words
-from os import getenv
 from keep_alive import keep_alive
 import homo
+import os
+from dotenv import load_dotenv
 
+# .envファイルの読み込み
+load_dotenv()
 keep_alive()
 
-TOKEN = getenv('DISCORD_BOT_TOKEN')
+# 環境変数の取得
+TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
 intents = discord.Intents.all()
 intents.typing = False
