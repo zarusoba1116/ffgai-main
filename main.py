@@ -102,10 +102,10 @@ async def on_message(message):
     ]
 
     # パターンを正規表現に変換
-    pattern = '|'.join(ai_patterns)
+    pattern01 = '|'.join(ai_patterns)
 
     # 正規表現を使用して検知
-    if re.search(pattern, message_content):
+    if re.search(pattern01, message_content) and not re.match(pattern, url):
         try:
             await message.author.send("https://lohas.nicoseiga.jp/thumb/1716952i?")
         except discord.Forbidden:
