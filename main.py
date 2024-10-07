@@ -40,16 +40,28 @@ async def on_message(message):
     if message.author.bot:
         return
     
-    if re.match(r"^-?\d+(\.\d+)?$", message.content):
-        # 入力を浮動小数点数に変換
-        input_value = float(message.content)
+    def parse_input(input_str):
+        # 小数または整数にマッチする正規表現
+        decimal_pattern = r"^-?\d+(\.\d+)?$"
+        # 分数にマッチする正規表現
+        fraction_pattern = r"^-?\d+/\d+$"
+        
+        if re.match(decimal_pattern, input_str):
+            return float(input_str)
+        elif re.match(fraction_pattern, input_str):
+            numerator, denominator = map(int, input_str.split('/'))
+            return numerator / denominator
+        else:
+            return None  # 無効な入力
 
+    # 入力値を解析
+    input_value = parse_input(message.content)
+
+    if input_value is not None:
         # 整数の場合は整数として返す関数
         def format_number(num):
-            if num.is_integer():
-                return int(num)  # 整数として返す
-            else:
-                return num  # 浮動小数点数のまま返す
+            return int(num) if num.is_integer() else num
+
         # フォーマット済みの値を取得
         formatted_input = format_number(input_value)
 

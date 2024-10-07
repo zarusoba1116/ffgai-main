@@ -7,6 +7,8 @@ def homo(nums):
 		for i in range(len(nums_reversed)):
 			if num >= nums_reversed[i]:
 				return nums_reversed[i]
+			for var_name, value in locals().items():
+				print(f"{var_name} = {value}")
 
 	is_dot_regex = re.compile(r'\.(\d+?)0{0,}$')
 
