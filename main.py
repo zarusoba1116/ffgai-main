@@ -27,6 +27,13 @@ bot = commands.Bot(command_prefix='$',help_command=None,case_insensitive=True,in
 
 previous_output = None
 
+@bot.event
+async def on_ready():
+    print(f'{bot.user.name} がログインしました。')
+    # ステータスを設定
+    activity = discord.Activity(name='真夏の夜の淫夢', type=discord.ActivityType.watching)
+    await bot.change_presence(status=discord.Status.online, activity=activity)
+
 @bot.listen("on_message")
 async def on_message(message):
     with open('data.json', 'r') as json_open:
