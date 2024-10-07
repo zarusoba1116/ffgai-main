@@ -17,23 +17,28 @@ def homo(nums):
 			return ""
 
 		if num == float('inf') or num != num:
-			return f"なんで見る必要なんかあるんですか（正論）"
+			return "なんで見る必要なんかあるんですか（正論）"
 
 		if num < 0:
 			return f"(⑨)*({demolish(-num)})".replace("*(1)", "")
 
 		if isinstance(num, float):
-			num_str = f'{num:.16f}'
+			num_str = f'{num:.16f}'  # 16桁にフォーマット
 			if '.' in num_str:
 				integer_part, fractional_part = num_str.split('.')
-				n = len(fractional_part.rstrip('0'))
+				# 小数部分の末尾の0を削除
+				fractional_part = fractional_part.rstrip('0')
+				# 小数部分が空になった場合
+				if fractional_part == '':
+					return integer_part
+				n = len(fractional_part)  # 小数部分の桁数
 				integer_value = int(integer_part + fractional_part)
 				return f'({demolish(integer_value)})/(10)^({n})'
 
-		if num in nums:
+		if num in nums:  # numsの定義が必要
 			return str(num)
 
-		div = get_min_div(num)
+		div = get_min_div(num)  # get_min_divの定義が必要
 		return (f"{div}*({demolish(num // div)})+({demolish(num % div)})").replace("*1", "").replace("+0", "")
 
 	def finisher(expr):
