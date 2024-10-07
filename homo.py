@@ -23,7 +23,7 @@ def homo(nums):
 			return f"(⑨)*({demolish(-num)})".replace("*(1)", "")
 
 		if isinstance(num, float):
-			num_str = f'{num:.16f}'  # 16桁にフォーマット
+			num_str = f'{num:.10f}'  # 16桁にフォーマット
 			if '.' in num_str:
 				integer_part, fractional_part = num_str.split('.')
 				# 小数部分の末尾の0を削除
