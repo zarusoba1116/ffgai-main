@@ -7,7 +7,6 @@ import asyncio
 import time
 import json
 from Word_list import words
-from keep_alive import keep_alive
 import homo
 import os
 from dotenv import load_dotenv
