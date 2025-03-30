@@ -11,13 +11,11 @@ from keep_alive import keep_alive
 import homo
 import os
 from dotenv import load_dotenv
+from server import server_thread
 
-# .envファイルの読み込み
-load_dotenv()
-keep_alive()
+dotenv.load_dotenv()
 
-# 環境変数の取得
-TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+TOKEN = os.environ.get("TOKEN")
 
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
 intents = discord.Intents.all()
@@ -312,4 +310,5 @@ async def evaluate_roll(ctx, rolls):
     else:
         return "役無し"
 
+server_thread()
 bot.run(TOKEN)
