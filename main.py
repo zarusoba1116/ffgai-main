@@ -9,7 +9,7 @@ import json
 from Word_list import words
 import homo
 import os
-from dotenv import load_dotenv
+import dotenv
 from server import server_thread
 
 dotenv.load_dotenv()
