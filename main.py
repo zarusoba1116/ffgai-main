@@ -9,12 +9,16 @@ import json
 from Word_list import words
 import homo
 import os
-import dotenv
-from server import server_thread
+from dotenv import load_dotenv
+from keep_alive import keep_alive
 
-dotenv.load_dotenv()
 
-TOKEN = os.environ.get("TOKEN")
+# .envファイルの読み込み
+load_dotenv()
+keep_alive()
+
+# 環境変数の取得
+TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 
 kanji_regex = re.compile(r'[\u4e00-\u9fff]')
 intents = discord.Intents.all()
@@ -309,5 +313,5 @@ async def evaluate_roll(ctx, rolls):
     else:
         return "役無し"
 
-server_thread()
+keep_alive()
 bot.run(TOKEN)
