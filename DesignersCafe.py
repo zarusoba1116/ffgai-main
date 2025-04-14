@@ -10,7 +10,6 @@ import dotenv
 from keep_alive import keep_alive
 import os
 
-
 # .envファイルの読み込み
 dotenv.load_dotenv()
 keep_alive(port=8080)
@@ -23,7 +22,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 # 日本語フォントを設定する関数
 def set_japanese_font():
     # フォント設定（Windowsの場合）
-    font_path = 'fonts/SourceHanSansJP-Heavy.otf'  # Linuxの例
+    font_path = '/app/fonts/SourceHanSansJP-Heavy.otf'  # Linuxの例
     prop = font_manager.FontProperties(fname=font_path)
     plt.rcParams['font.family'] = prop.get_name()
 
