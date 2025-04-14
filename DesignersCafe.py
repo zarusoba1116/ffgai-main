@@ -13,7 +13,7 @@ import os
 
 # .envファイルの読み込み
 dotenv.load_dotenv()
-keep_alive()
+keep_alive(port=8080)
 
 intents = discord.Intents.all()
 intents.members = True  # メンバー情報を取得可能にする

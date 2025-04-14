@@ -15,7 +15,7 @@ from keep_alive import keep_alive
 
 # .envファイルの読み込み
 dotenv.load_dotenv()
-keep_alive()
+keep_alive(port=8080)
 
 
 TOKEN = os.environ.get("TOKEN")
@@ -313,5 +313,4 @@ async def evaluate_roll(ctx, rolls):
     else:
         return "役無し"
 
-keep_alive()
 bot.run(TOKEN)
