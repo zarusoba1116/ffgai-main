@@ -23,7 +23,12 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 # 日本語フォントを設定する関数
 def set_japanese_font():
     font_path = os.path.join(os.path.dirname(__file__), 'SourceHanSansJP-Heavy.otf')
+    print(f"[DEBUG] フォントパス: {font_path}")
+    if not os.path.exists(font_path):
+        print("[ERROR] フォントファイルが見つかりません")
+        return
     prop = font_manager.FontProperties(fname=font_path)
+    print(f"[DEBUG] 読み込んだフォント名: {prop.get_name()}")
     plt.rcParams['font.family'] = prop.get_name()
 
 # 棒グラフ画像を作成する関数
