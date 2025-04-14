@@ -64,7 +64,7 @@ async def on_voice_state_update(member, before, after):
             call_start_times[member.id] = time.time()  # 通話開始時間を記録
 
             # 通知を送るチャンネルID（テキストチャンネル）
-            notify_channel_id = 1356114004845658284  # ←ご自身のチャンネルIDに置き換えてください
+            notify_channel_id = 1358429894719311912  # ←ご自身のチャンネルIDに置き換えてください
             notify_channel = bot.get_channel(notify_channel_id)
             ut = int(time.time())
 
@@ -96,7 +96,7 @@ async def on_voice_state_update(member, before, after):
             formatted_duration = f"{hours:02}:{minutes:02}:{seconds:02}"
 
             # 通話終了通知を送る
-            notify_channel_id = 1356114004845658284  # ←ご自身のチャンネルIDに置き換えてください
+            notify_channel_id = 1358429894719311912  # ←ご自身のチャンネルIDに置き換えてください
             notify_channel = bot.get_channel(notify_channel_id)
 
             if notify_channel:
