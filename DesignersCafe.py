@@ -22,8 +22,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 # 日本語フォントを設定する関数
 def set_japanese_font():
-    # フォント設定（Windowsの場合）
-    font_path = 'SourceHanSansJP-Heavy.otf'  # Linuxの例
+    font_path = os.path.join(os.path.dirname(__file__), 'SourceHanSansJP-Heavy.otf')
     prop = font_manager.FontProperties(fname=font_path)
     plt.rcParams['font.family'] = prop.get_name()
 
