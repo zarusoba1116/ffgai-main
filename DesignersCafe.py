@@ -100,7 +100,7 @@ async def on_voice_state_update(member, before, after):
             formatted_duration = f"{hours:02}:{minutes:02}:{seconds:02}"
 
             # 通話終了通知を送る
-            notify_channel_id = 1356114004845658284  # ←ご自身のチャンネルIDに置き換えてください
+            notify_channel_id = 1358429894719311912
             notify_channel = bot.get_channel(notify_channel_id)
 
             if notify_channel:
@@ -115,7 +115,7 @@ async def on_voice_state_update(member, before, after):
 @bot.event
 async def on_member_remove(member):
     # 通知を送るチャンネルID（テキストチャンネル）
-    notify_channel_id = 1358429894719311912  # ←ご自身のチャンネルIDに置き換えてください
+    notify_channel_id = 1356114004845658284
     notify_channel = bot.get_channel(notify_channel_id)
 
     # 退出時刻の取得
